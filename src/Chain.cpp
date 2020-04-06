@@ -131,95 +131,128 @@ auto to_upper(
 }
 
 auto trim_left(
-    std::string& s) -> void
+    std::string& data) -> void
 {
-    auto found = std::find_if_not(s.begin(), s.end(), [](int ch) -> bool { return std::isspace(ch); });
+    auto found = std::find_if_not(data.begin(), data.end(), [](int ch) -> bool { return std::isspace(ch); });
     /**
      * If nothing is found, e.g. the entire string is whitespace then
      * the erase will trim the entire string.
      */
-    s.erase(s.begin(), found);
+    data.erase(data.begin(), found);
 }
 
 auto trim_left(
-    std::string& s,
+    std::string& data,
     std::string_view to_remove) -> void
 {
-    if (to_remove.empty()) {
+    if (data.empty() || to_remove.empty()) {
         return;
     }
+
     std::size_t remove_size = 0;
-    std::string_view sv { s };
+    std::string_view sv { data.data(), data.length() };
     std::size_t to_remove_size = to_remove.size();
     while (starts_with(sv, to_remove)) {
         sv.remove_prefix(to_remove_size);
         remove_size += to_remove_size;
     }
     if (remove_size > 0) {
-        s.erase(0, remove_size);
+        data.erase(0, remove_size);
     }
 }
 
 auto trim_left_view(
-    std::string_view s) -> std::string_view
+    std::string_view data) -> std::string_view
 {
-    if (s.empty()) {
-        return s;
+    if (data.empty()) {
+        return data;
     }
 
     std::size_t index = 0;
-    while (index < s.length()) {
-        if (!std::isspace(s[index])) {
+    while (index < data.length()) {
+        if (!std::isspace(data[index])) {
             break;
         } else {
             ++index;
         }
     }
-    return s.substr(index);
+    return data.substr(index);
 }
 
-auto trim_right(
-    std::string& s) -> void
+auto trim_left_view(
+    std::string_view data,
+    std::string_view to_remove) -> std::string_view
 {
-    auto start = std::find_if_not(s.rbegin(), s.rend(), [](int ch) -> bool { return std::isspace(ch); }).base();
-    s.erase(start, s.end());
+    if(data.empty() || to_remove.empty())
+    {
+        return data;
+    }
+
+    while (starts_with(data, to_remove)) {
+        data.remove_prefix(to_remove.size());
+    }
+
+    return data;
 }
 
 auto trim_right(
-    std::string& s,
+    std::string& data) -> void
+{
+    auto start = std::find_if_not(data.rbegin(), data.rend(), [](int ch) -> bool { return std::isspace(ch); }).base();
+    data.erase(start, data.end());
+}
+
+auto trim_right(
+    std::string& data,
     std::string_view to_remove) -> void
 {
     if (to_remove.empty()) {
         return;
     }
     std::size_t remove_size = 0;
-    std::string_view sv { s };
+    std::string_view sv { data.data(), data.length() };
     std::size_t to_remove_size = to_remove.size();
     while (ends_with(sv, to_remove)) {
         sv.remove_suffix(to_remove_size);
         remove_size += to_remove_size;
     }
     if (remove_size > 0) {
-        s.erase(s.size() - remove_size);
+        data.erase(data.size() - remove_size);
     }
 }
 
 auto trim_right_view(
-    std::string_view s) -> std::string_view
+    std::string_view data) -> std::string_view
 {
-    if (s.empty()) {
-        return s;
+    if (data.empty()) {
+        return data;
     }
 
-    int64_t index = static_cast<int64_t>(s.length() - 1);
+    int64_t index = static_cast<int64_t>(data.length() - 1);
     while (index >= 0) {
-        if (!std::isspace(s[static_cast<std::size_t>(index)])) {
+        if (!std::isspace(data[static_cast<std::size_t>(index)])) {
             break;
         } else {
             --index;
         }
     }
-    return s.substr(0, static_cast<std::size_t>(index + 1));
+    return data.substr(0, static_cast<std::size_t>(index + 1));
+}
+
+auto trim_right_view(
+    std::string_view data,
+    std::string_view to_remove) -> std::string_view
+{
+    if(data.empty() || to_remove.empty())
+    {
+        return data;
+    }
+
+    while (ends_with(data, to_remove)) {
+        data.remove_suffix(to_remove.size());
+    }
+
+    return data;
 }
 
 auto trim(

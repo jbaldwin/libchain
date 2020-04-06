@@ -108,7 +108,7 @@ auto join(
     const RangeType& parts,
     char delim) -> std::string
 {
-    return join(parts, std::string_view { delim, 1 });
+    return join(parts, std::string_view { &delim, 1 });
 }
 
 /**
@@ -156,7 +156,7 @@ auto transform_join(
     const RangeType& parts,
     char delim) -> std::string
 {
-    return transform_join(parts, std::string_view { delim, 1 });
+    return transform_join(parts, std::string_view { &delim, 1 });
 }
 
 /**
