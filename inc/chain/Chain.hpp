@@ -63,6 +63,67 @@ auto split(
     std::string_view delim,
     std::vector<std::string_view>& out) -> void;
 
+template<typename T, typename MapFunctor>
+auto split_map(
+    std::string_view data,
+    std::string_view delim,
+    const MapFunctor& map,
+    std::vector<T>& out) -> void
+{
+    std::size_t length;
+    std::size_t start = 0;
+
+    while (true) {
+        std::size_t next = data.find(delim, start);
+        if (next == std::string_view::npos) {
+            // The length of this split is the full string length - start.
+            // This is also true if there were no delimiters found at all.
+            length = data.length() - start;
+            out.emplace_back(map(std::string_view{data.data() + start, length}));
+            break;
+        }
+
+        // The length of this split is from start to next.
+        length = next - start;
+        out.emplace_back(map(std::string_view{data.data() + start, length}));
+
+        // Update our iteration to skip the 'next' delimiter found.
+        start = next + delim.length();
+    }
+}
+
+template<typename T, typename MapFunctor>
+auto split_map(
+    std::string_view data,
+    char delim,
+    const MapFunctor& map,
+    std::vector<T>& out) -> void
+{
+    split_map(data, std::string_view{&delim, 1}, map, out);
+}
+
+template<typename T, typename MapFunctor>
+auto split_map(
+    std::string_view data,
+    std::string_view delim,
+    const MapFunctor& map) -> std::vector<T>
+{
+    std::vector<T> out{};
+    split_map(data, delim, map, out);
+    return out;
+}
+
+template<typename T, typename MapFunctor>
+auto split_map(
+    std::string_view data,
+    char delim,
+    const MapFunctor& map) -> std::vector<T>
+{
+    std::vector<T> out{};
+    split_map(data, std::string_view{&delim, 1}, map, out);
+    return out;
+}
+
 /**
  * Joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
@@ -346,28 +407,71 @@ auto is_int(
     std::string_view data) -> bool;
 
 /**
- * cCnverts a string_view to a number with no copies.
- * Scientific notiation is supported if converting to a double.
- * @throws std::exception On failure.
+ * Converts an integer string_view to a number with no copies.
  * @tparam T The output number type.
  * @param data The data to convert to a number.
+ * @param base The data's base.
  * @return The number if converted.
  */
-template <typename T>
+template <
+    typename Integer,
+    std::enable_if_t<std::is_integral_v<Integer>, int> = 0
+>
 auto to_number(
-    std::string_view data) -> std::optional<T>
+    std::string_view data,
+    uint64_t base = 10) -> std::optional<Integer>
 {
-    if constexpr (std::is_unsigned<T>::value) {
+    // https://en.cppreference.com/w/cpp/utility/from_chars
+
+    if constexpr (std::is_unsigned<Integer>::value) {
         if (data.size() > 0 && data.front() == '-') {
             return std::nullopt;
         }
     }
 
-    T output {};
-    auto result = std::from_chars(&data.front(), &data.back(), output);
+    // only the minus sign is recognized (not the plus sign), and only for signed integer types of value.
+    if(data.size() > 0 && data.front() == '+') {
+        data.remove_prefix(1);
+    }
+
+    Integer output {};
+    auto result = std::from_chars(data.data(), data.data() + data.length(), output, base);
+
     if (result.ec == std::errc::invalid_argument) {
         return std::nullopt;
     }
+    return output;
+}
+
+template<
+    typename FloatingPoint,
+    std::enable_if_t<std::is_floating_point_v<FloatingPoint>, int> = 0
+>
+auto to_number(
+    const std::string& data) -> std::optional<FloatingPoint>
+{
+    FloatingPoint output {};
+
+    std::size_t pos{0};
+
+    try
+    {
+        if constexpr (sizeof(FloatingPoint) == sizeof(float)) {
+            output = std::stof(data, &pos);
+        }
+        else if constexpr (sizeof(FloatingPoint) == sizeof(double)) {
+            output = std::stod(data, &pos);
+        }
+        else if constexpr (sizeof(FloatingPoint) == sizeof(long double)) {
+            output = std::stold(data, &pos);
+        }
+        else {
+            return std::nullopt;
+        }
+    } catch(...) {
+        return std::nullopt;
+    }
+
     return output;
 }
 

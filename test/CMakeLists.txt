@@ -7,6 +7,7 @@ set(SOURCE_FILES_LIB_CHAIN_TEST
     JoinTest.hpp
     main.cpp
     SplitTest.hpp
+    ToNumberTest.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES_LIB_CHAIN_TEST})

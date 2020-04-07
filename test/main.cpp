@@ -10,3 +10,4 @@ TEST_CASE("catch_is_working")
 
 #include "SplitTest.hpp"
 #include "JoinTest.hpp"
+#include "ToNumberTest.hpp"
