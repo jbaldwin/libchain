@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <vector>
 
 namespace chain::str {
@@ -65,7 +64,7 @@ auto split(
     std::vector<std::string_view>& out) -> void;
 
 /**
- * @brief Joins a set of values together into a string.
+ * Joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
@@ -97,7 +96,7 @@ auto join(
 }
 
 /**
- * @brief Joins a set of values together into a string.
+ * Joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
@@ -112,18 +111,18 @@ auto join(
 }
 
 /**
- * @brief Joins a set of values together into a string.
+ * Maps and joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
- * @tparam TransformFunctor A function to transform each individual `parts` part before joining.
+ * @tparam MapFunctor A function to map each individual `parts` part before joining.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
- * @return Transformed `parts` joined by `delim`.
+ * @return Mapped `parts` joined by `delim`.
  */
-template <typename RangeType, typename TransformFunctor>
-auto transform_join(
+template <typename RangeType, typename MapFunctor>
+auto map_join(
     const RangeType& parts,
     std::string_view delim,
-    const TransformFunctor& transform) -> std::string
+    const MapFunctor& map) -> std::string
 {
     thread_local std::stringstream ss {};
 
@@ -136,27 +135,30 @@ auto transform_join(
         if (first) {
             first = false;
         } else {
-            ss << transform(part);
+            ss << delim;
         }
+
+        ss << map(part);
     }
 
     return ss.str();
 }
 
 /**
- * @brief Joins a set of values together into a string.
+ * Maps and joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
- * @tparam TransformFunctor A function to transform each individual `parts` part before joining.
+ * @tparam MapFunctor A function to map each individual `parts` part before joining.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
- * @return Transformed `parts` joined by `delim`.
+ * @return Mapped `parts` joined by `delim`.
  */
-template <typename RangeType>
-auto transform_join(
+template <typename RangeType, typename MapFunctor>
+auto map_join(
     const RangeType& parts,
-    char delim) -> std::string
+    char delim,
+    const MapFunctor& map) -> std::string
 {
-    return transform_join(parts, std::string_view { &delim, 1 });
+    return map_join(parts, std::string_view { &delim, 1 }, map);
 }
 
 /**
@@ -323,7 +325,7 @@ auto trim_view(
     std::string_view to_remove) -> std::string_view;
 
 /**
- * @brief Replaces up to `count` instances of `from` to `to` within `data`.
+ * Replaces up to `count` instances of `from` to `to` within `data`.
  * @param data The data to replace instances of `from` with `to`.
  * @param from The value to replace.
  * @param to The value to replace with.
@@ -344,7 +346,7 @@ auto is_int(
     std::string_view data) -> bool;
 
 /**
- * @brief cCnverts a string_view to a number with no copies.
+ * cCnverts a string_view to a number with no copies.
  * Scientific notiation is supported if converting to a double.
  * @throws std::exception On failure.
  * @tparam T The output number type.
