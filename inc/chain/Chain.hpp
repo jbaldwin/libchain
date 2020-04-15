@@ -125,7 +125,8 @@ auto split_map(
 }
 
 /**
- * Joins a set of values together into a string.
+ * Joins a set of values together into a single string.  The values being joined
+ * together must have an ostream operator<< function declared to convert to strings.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
@@ -157,7 +158,8 @@ auto join(
 }
 
 /**
- * Joins a set of values together into a string.
+ * Joins a set of values together into a single string.  The values being joined
+ * together must have an ostream operator<< function declared to convert to strings.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
@@ -172,7 +174,8 @@ auto join(
 }
 
 /**
- * Maps and joins a set of values together into a string.
+ * Maps and joins a set of values together into a single string.  The values being joined
+ * together must have an ostream operator<< function declared to convert to strings.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
  * @tparam MapFunctor A function to map each individual `parts` part before joining.
  * @param parts The set of values to join together with `delim`.
