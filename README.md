@@ -1,7 +1,7 @@
 libchain - C++17 std::string utility chain belt.
 ================================================
 
-[![CircleCI](https://circleci.com/gh/jbaldwin/libchain/tree/master.svg?style=svg)](https://circleci.com/gh/jbaldwin/libchain/tree/master)
+[![CI](https://github.com/jbaldwin/libchain/workflows/build-release-test/badge.svg)](https://github.com/jbaldwin/libchain/workflows/build-release-test/badge.svg)
 [![language][badge.language]][language]
 [![license][badge.license]][license]
 
@@ -17,6 +17,7 @@ https://github.com/jbaldwin/libchain
 
 ## Requirements
     C++17 compiler (g++/clang++)
+        Tested on g++-9 and clang++-9
     CMake
     make and/or ninja
 
@@ -38,7 +39,7 @@ auto parts = str::split("1,2,3", ',');
 // parts = { "1", "2", "3" }
 
 // A split mapped into integers.
-auto parts = str::split_map<int64_t>("1,2,3", ',', [](auto part) {
+auto parts = str::split_map<int64_t>("1,2,3", ',', [](std::string_view part) {
     return str::to_number<int64_t>(part).value_or(0);
 });
 /// parts = { 1, 2, 3 }
