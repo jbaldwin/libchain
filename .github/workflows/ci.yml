@@ -8,6 +8,10 @@ jobs:
         runs-on: ubuntu-latest
         container:
             image: ubuntu:latest
+            env:
+                TZ: America/New_York
+                DEBIAN_FRONTEND: noninteractive
+
         steps:
             -   name: Checkout
                 uses: actions/checkout@v2
@@ -68,7 +72,20 @@ jobs:
                         cmake \
                         ninja-build \
                         g++ \
-                        clang
+                        clang \
+                        lcov
+            -   name: build-debug-g++
+                run: |
+                    mkdir build-debug-g++
+                    cd build-debug-g++
+                    cmake \
+                        -GNinja \
+                        -DCHAIN_CODE_COVERAGE=ON \
+                        -DCMAKE_BUILD_TYPE=Debug \
+                        -DCMAKE_C_COMPILER=gcc \
+                        -DCMAKE_CXX_COMPILER=g++ \
+                        ..
+                    ninja
             -   name: build-release-g++
                 run: |
                     mkdir build-release-g++
@@ -99,3 +116,14 @@ jobs:
                 run: |
                     cd build-release-clang
                     ctest -v
+            -   name: Build coverage info
+                run: |
+                    cd build-debug-g++
+                    ctest -v
+                    gcov -o ./test/CMakeFiles/libchain_test.dir/main.cpp.o ./test/libchain_test
+                    lcov --include "*/inc/chain/*" --include "*/src/*" --exclude "test/*" -o libchain_tests.info -c -d .
+            -   name: Coveralls GitHub Action
+                uses: coverallsapp/github-action@v1.0.1
+                with:
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    path-to-lcov: build-debug-g++/libchain_tests.info

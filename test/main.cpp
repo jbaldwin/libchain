@@ -3,11 +3,11 @@
 
 #include <chain/Chain.hpp>
 
-TEST_CASE("catch_is_working")
-{
-    CHECK(true);
-}
-
-#include "SplitTest.hpp"
+#include "CompareTest.hpp"
 #include "JoinTest.hpp"
+#include "ReplaceTest.hpp"
+#include "SplitTest.hpp"
+#include "StrerrorTest.hpp"
 #include "ToNumberTest.hpp"
+#include "TransformTest.hpp"
+#include "TrimTest.hpp"
