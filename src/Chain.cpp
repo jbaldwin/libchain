@@ -124,72 +124,144 @@ auto to_lower(
     std::transform(data.begin(), data.end(), data.begin(), ::tolower);
 }
 
+auto to_lower_copy(
+    std::string_view data) -> std::string
+{
+    std::string copy { data };
+    to_lower(copy);
+    return copy;
+}
+
 auto to_upper(
     std::string& data) -> void
 {
     std::transform(data.begin(), data.end(), data.begin(), ::toupper);
 }
 
+auto to_upper_copy(
+    std::string_view data) -> std::string
+{
+    std::string copy { data };
+    to_upper(copy);
+    return copy;
+}
+
 auto trim_left(
     std::string& data) -> void
 {
-    auto found = std::find_if_not(data.begin(), data.end(), [](int ch) -> bool { return std::isspace(ch); });
-    /**
-     * If nothing is found, e.g. the entire string is whitespace then
-     * the erase will trim the entire string.
-     */
-    data.erase(data.begin(), found);
+    if (!data.empty()) {
+        auto found = std::find_if_not(
+            data.begin(),
+            data.end(),
+            [](unsigned char ch) -> bool { return std::isspace(ch); });
+
+        // If the entire string is std::isspace just clear it.
+        if (found == data.end()) {
+            data.clear();
+        } else {
+            data.erase(data.begin(), found);
+        }
+    }
 }
 
 auto trim_left(
     std::string& data,
     std::string_view to_remove) -> void
 {
-    if (data.empty() || to_remove.empty()) {
-        return;
-    }
+    if (!data.empty() && !to_remove.empty()) {
+        std::size_t total_remove_size = 0;
+        std::string_view sv { data.data(), data.length() };
+        while (starts_with(sv, to_remove)) {
+            sv.remove_prefix(to_remove.size());
+            total_remove_size += to_remove.size();
+        }
 
-    std::size_t remove_size = 0;
-    std::string_view sv { data.data(), data.length() };
-    std::size_t to_remove_size = to_remove.size();
-    while (starts_with(sv, to_remove)) {
-        sv.remove_prefix(to_remove_size);
-        remove_size += to_remove_size;
+        if (total_remove_size > 0) {
+            data.erase(0, total_remove_size);
+        }
     }
-    if (remove_size > 0) {
-        data.erase(0, remove_size);
+}
+
+auto trim_left(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void
+{
+    if (!data.empty() && !to_remove.empty()) {
+        std::size_t total_remove_size = 0;
+        std::string_view sv { data.data(), data.length() };
+
+        while (true) {
+            bool had_removal { false };
+
+            for (const auto& remove : to_remove) {
+                while (starts_with(sv, remove)) {
+                    sv.remove_prefix(remove.size());
+                    total_remove_size += remove.size();
+                    had_removal = true;
+                }
+            }
+
+            if (!had_removal) {
+                break;
+            }
+        }
+
+        if (total_remove_size > 0) {
+            data.erase(0, total_remove_size);
+        }
     }
 }
 
 auto trim_left_view(
     std::string_view data) -> std::string_view
 {
-    if (data.empty()) {
-        return data;
+    if (!data.empty()) {
+        std::size_t index = 0;
+        while (index < data.length()) {
+            if (!std::isspace(static_cast<unsigned char>(data[index]))) {
+                break;
+            } else {
+                ++index;
+            }
+        }
+        data.remove_prefix(index);
     }
 
-    std::size_t index = 0;
-    while (index < data.length()) {
-        if (!std::isspace(data[index])) {
-            break;
-        } else {
-            ++index;
-        }
-    }
-    return data.substr(index);
+    return data;
 }
 
 auto trim_left_view(
     std::string_view data,
     std::string_view to_remove) -> std::string_view
 {
-    if(data.empty() || to_remove.empty())
-    {
-        return data;
+    if (!data.empty() && !to_remove.empty()) {
+        while (starts_with(data, to_remove)) {
+            data.remove_prefix(to_remove.size());
+        }
     }
 
-    while (starts_with(data, to_remove)) {
-        data.remove_prefix(to_remove.size());
+    return data;
+}
+
+auto trim_left_view(
+    std::string_view data,
+    const std::vector<std::string_view>& to_remove) -> std::string_view
+{
+    if (!data.empty() && !to_remove.empty()) {
+        while (true) {
+            bool had_removal { false };
+
+            for (const auto& remove : to_remove) {
+                while (starts_with(data, remove)) {
+                    data.remove_prefix(remove.size());
+                    had_removal = true;
+                }
+            }
+
+            if (!had_removal) {
+                break;
+            }
+        }
     }
 
     return data;
@@ -198,58 +270,118 @@ auto trim_left_view(
 auto trim_right(
     std::string& data) -> void
 {
-    auto start = std::find_if_not(data.rbegin(), data.rend(), [](int ch) -> bool { return std::isspace(ch); }).base();
-    data.erase(start, data.end());
+    if (!data.empty()) {
+        auto found = std::find_if_not(
+            data.rbegin(),
+            data.rend(),
+            [](unsigned char ch) -> bool { return std::isspace(ch); });
+
+        if (found == data.rend()) {
+            data.clear();
+        } else {
+            data.erase(found.base(), data.end());
+        }
+    }
 }
 
 auto trim_right(
     std::string& data,
     std::string_view to_remove) -> void
 {
-    if (to_remove.empty()) {
-        return;
+    if (!to_remove.empty()) {
+        std::size_t total_remove_size = 0;
+        std::string_view sv { data.data(), data.length() };
+        while (ends_with(sv, to_remove)) {
+            sv.remove_suffix(to_remove.size());
+            total_remove_size += to_remove.size();
+        }
+        if (total_remove_size > 0) {
+            data.erase(data.size() - total_remove_size);
+        }
     }
-    std::size_t remove_size = 0;
-    std::string_view sv { data.data(), data.length() };
-    std::size_t to_remove_size = to_remove.size();
-    while (ends_with(sv, to_remove)) {
-        sv.remove_suffix(to_remove_size);
-        remove_size += to_remove_size;
-    }
-    if (remove_size > 0) {
-        data.erase(data.size() - remove_size);
+}
+
+auto trim_right(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void
+{
+    if (!data.empty() && !to_remove.empty()) {
+        std::size_t total_remove_size = 0;
+        std::string_view sv { data.data(), data.length() };
+
+        while (true) {
+            bool had_removal { false };
+
+            for (const auto& remove : to_remove) {
+                while (ends_with(sv, remove)) {
+                    sv.remove_suffix(remove.size());
+                    total_remove_size += remove.size();
+                    had_removal = true;
+                }
+            }
+
+            if (!had_removal) {
+                break;
+            }
+        }
+
+        if (total_remove_size > 0) {
+            data.erase(data.size() - total_remove_size);
+        }
     }
 }
 
 auto trim_right_view(
     std::string_view data) -> std::string_view
 {
-    if (data.empty()) {
-        return data;
+    if (!data.empty()) {
+        int64_t index = static_cast<int64_t>(data.length() - 1);
+        while (index >= 0) {
+            if (!std::isspace(static_cast<unsigned char>(data[static_cast<std::size_t>(index)]))) {
+                break;
+            } else {
+                --index;
+            }
+        }
+
+        data = data.substr(0, static_cast<std::size_t>(index + 1));
     }
 
-    int64_t index = static_cast<int64_t>(data.length() - 1);
-    while (index >= 0) {
-        if (!std::isspace(data[static_cast<std::size_t>(index)])) {
-            break;
-        } else {
-            --index;
-        }
-    }
-    return data.substr(0, static_cast<std::size_t>(index + 1));
+    return data;
 }
 
 auto trim_right_view(
     std::string_view data,
     std::string_view to_remove) -> std::string_view
 {
-    if(data.empty() || to_remove.empty())
-    {
-        return data;
+    if (!data.empty() && !to_remove.empty()) {
+        while (ends_with(data, to_remove)) {
+            data.remove_suffix(to_remove.size());
+        }
     }
 
-    while (ends_with(data, to_remove)) {
-        data.remove_suffix(to_remove.size());
+    return data;
+}
+
+auto trim_right_view(
+    std::string_view data,
+    const std::vector<std::string_view>& to_remove) -> std::string_view
+{
+    if (!data.empty() && !to_remove.empty()) {
+        while (true) {
+            bool had_removal { false };
+
+            for (const auto& remove : to_remove) {
+                while (ends_with(data, remove)) {
+                    data.remove_suffix(remove.size());
+                    had_removal = true;
+                }
+            }
+
+            if (!had_removal) {
+                break;
+            }
+        }
     }
 
     return data;
@@ -270,6 +402,14 @@ auto trim(
     trim_right(data, to_remove);
 }
 
+auto trim(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void
+{
+    trim_left(data, to_remove);
+    trim_right(data, to_remove);
+}
+
 auto trim_view(
     std::string_view s) -> std::string_view
 {
@@ -280,15 +420,35 @@ auto trim_view(
     std::string_view data,
     std::string_view to_remove) -> std::string_view
 {
-    return trim_left_view(trim_right_view(data, to_remove), to_remove);
+    return trim_right_view(trim_left_view(data, to_remove), to_remove);
+}
+
+auto trim_view(
+    std::string_view data,
+    const std::vector<std::string_view>& to_remove) -> std::string_view
+{
+    return trim_right_view(trim_left_view(data, to_remove), to_remove);
 }
 
 auto replace(
     std::string& data,
     std::string_view from,
     std::string_view to,
+    Case case_type,
     std::optional<std::size_t> count) -> std::size_t
 {
+    (void)case_type; // TODO not supported yet
+
+    auto max = std::numeric_limits<std::size_t>::max();
+
+    if (count.has_value()) {
+        if (count.value() == 0) {
+            return 0;
+        } else {
+            max = count.value();
+        }
+    }
+
     std::size_t replaced { 0 };
 
     std::size_t start_pos { 0 };
@@ -297,8 +457,7 @@ auto replace(
         start_pos += to.length();
         ++replaced;
 
-        // If a maximum number was requested, stop at that number.
-        if (count.has_value() && replaced >= count.value()) {
+        if (replaced >= max) {
             return replaced;
         }
     }
@@ -306,25 +465,58 @@ auto replace(
     return replaced;
 }
 
+auto replace_copy(
+    std::string_view data,
+    std::string_view from,
+    std::string_view to,
+    Case case_type,
+    std::optional<std::size_t> count) -> std::pair<std::string, std::size_t>
+{
+    std::string copy { data };
+    std::size_t num = replace(copy, from, to, case_type, count);
+    return { std::move(copy), num };
+}
+
 auto is_int(
     std::string_view data) -> bool
 {
+    // TODO These probably need stricter requirements to differentiate between
+    // an integer and a float.
+    if (data.find('.') != std::string_view::npos) {
+        return false;
+    }
+
     return to_number<int64_t>(data).has_value();
 }
 
-auto strerror(
-    std::string& buffer) -> void
+auto is_float(
+    std::string_view data) -> bool
 {
-    char* error_ptr = strerror_r(errno, buffer.data(), buffer.length());
-    std::size_t len = std::strlen(error_ptr);
-    buffer.resize(len);
+    if (data.find('.') == std::string_view::npos) {
+        return false;
+    }
+
+    return to_number<double>(std::string { data }).has_value();
 }
 
-auto strerror() -> std::string
+auto is_number(
+    std::string_view data) -> bool
 {
-    std::string buffer(1024, ' ');
-    strerror(buffer);
-    return buffer;
+    return is_int(data) || is_float(std::string { data });
+}
+
+auto strerror(
+    int errsv) -> std::string
+{
+    // strerror_r appears to ignore passed in buffer args, manually copy
+    // the data from the returned error_ptr.  The XSI complain version of this
+    // function would probably just work...
+    // TODO: might need some #defines to make this more portable for non-GNU.
+    constexpr std::size_t LEN = 1024;
+    char buffer[LEN];
+    char* error_ptr = strerror_r(errsv, buffer, LEN);
+
+    return std::string { error_ptr, std::strlen(error_ptr) };
 }
 
 } // namespace chain::str

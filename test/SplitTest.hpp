@@ -14,6 +14,18 @@ TEST_CASE("split csv")
     REQUIRE(parts[2] == "3");
 }
 
+TEST_CASE("split csv with out param")
+{
+    std::vector<std::string_view> parts;
+    parts.reserve(3);
+    chain::str::split("1,2,3", ',', parts);
+
+    REQUIRE(parts.size() == 3);
+    REQUIRE(parts[0] == "1");
+    REQUIRE(parts[1] == "2");
+    REQUIRE(parts[2] == "3");
+}
+
 TEST_CASE("split string view delim")
 {
     auto parts = chain::str::split("1:-2:-3", ":-");

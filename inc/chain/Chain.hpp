@@ -63,7 +63,7 @@ auto split(
     std::string_view delim,
     std::vector<std::string_view>& out) -> void;
 
-template<typename T, typename MapFunctor>
+template <typename T, typename MapFunctor>
 auto split_map(
     std::string_view data,
     std::string_view delim,
@@ -79,48 +79,48 @@ auto split_map(
             // The length of this split is the full string length - start.
             // This is also true if there were no delimiters found at all.
             length = data.length() - start;
-            out.emplace_back(map(std::string_view{data.data() + start, length}));
+            out.emplace_back(map(std::string_view { data.data() + start, length }));
             break;
         }
 
         // The length of this split is from start to next.
         length = next - start;
-        out.emplace_back(map(std::string_view{data.data() + start, length}));
+        out.emplace_back(map(std::string_view { data.data() + start, length }));
 
         // Update our iteration to skip the 'next' delimiter found.
         start = next + delim.length();
     }
 }
 
-template<typename T, typename MapFunctor>
+template <typename T, typename MapFunctor>
 auto split_map(
     std::string_view data,
     char delim,
     const MapFunctor& map,
     std::vector<T>& out) -> void
 {
-    split_map(data, std::string_view{&delim, 1}, map, out);
+    split_map(data, std::string_view { &delim, 1 }, map, out);
 }
 
-template<typename T, typename MapFunctor>
+template <typename T, typename MapFunctor>
 auto split_map(
     std::string_view data,
     std::string_view delim,
     const MapFunctor& map) -> std::vector<T>
 {
-    std::vector<T> out{};
+    std::vector<T> out {};
     split_map(data, delim, map, out);
     return out;
 }
 
-template<typename T, typename MapFunctor>
+template <typename T, typename MapFunctor>
 auto split_map(
     std::string_view data,
     char delim,
     const MapFunctor& map) -> std::vector<T>
 {
-    std::vector<T> out{};
-    split_map(data, std::string_view{&delim, 1}, map, out);
+    std::vector<T> out {};
+    split_map(data, std::string_view { &delim, 1 }, map, out);
     return out;
 }
 
@@ -267,7 +267,7 @@ auto cmp(
  * @param data The data to see if it starts with `begin`.
  * @param begin Value to check if `data` starts with.
  * @param case_type Is the comparison case sensitive or insensitive?
- * @return True if `data` starts with `begin`.
+ * @return True if `data` starts with `begin`.  Equal length strings will match.
  */
 auto starts_with(
     std::string_view data,
@@ -278,7 +278,7 @@ auto starts_with(
  * @param data The data to see if it ends with `begin`.
  * @param begin Value to check if `data` ends with.
  * @param case_type Is the comparison case sensitive or insensitive?
- * @return True if `data` ends with `begin`.
+ * @return True if `data` ends with `begin`.  Equal length strings will match.
  */
 auto ends_with(
     std::string_view data,
@@ -292,10 +292,24 @@ auto to_lower(
     std::string& data) -> void;
 
 /**
+ * @param data The data to transform to lower case.  uses std::tolower().
+ * @return A copy of `daa` transformed to lowercase.
+ */
+auto to_lower_copy(
+    std::string_view data) -> std::string;
+
+/**
  * @param data The data to transform to upper case.  Uses std::toupper().
  */
 auto to_upper(
     std::string& data) -> void;
+
+/**
+ * @param data The data to transform to upper case.  Uses std::toupper().
+ * @return A copy of `data` transformed to uppercase.
+ */
+auto to_upper_copy(
+    std::string_view data) -> std::string;
 
 /**
  * @param data Trims the left side with std::isspace().
@@ -305,11 +319,19 @@ auto trim_left(
 
 /**
  * @param data Trims the left side of this data with `to_remove`.
- * @param to_remove The values on the left side to remove from `data`.
+ * @param to_remove The value on the left side to remove from `data`.
  */
 auto trim_left(
     std::string& data,
     std::string_view to_remove) -> void;
+
+/**
+ * @param data Trims the left side of this data with `to_remove`.
+ * @param to_remove The values on the left side to remove from `data`.
+ */
+auto trim_left(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void;
 
 /**
  * @param data Trims the left side of this data with `to_remove`.
@@ -320,12 +342,21 @@ auto trim_left_view(
 
 /**
  * @param data Trims the left side of this data with `to_remove`.
- * @param to_remove The values on the left side to remove from `data`.
+ * @param to_remove The value on the left side to remove from `data`.
  * @return A string view of `data` with the left side of `to_remove` removed.
  */
 auto trim_left_view(
     std::string_view data,
     std::string_view to_remove) -> std::string_view;
+
+/**
+ * @param data Trims the left side of this data with `to_remove`.
+ * @param to_remove The values on the left side to remove from `data`.
+ * @return A string view of `data` with the left side of `to_remove` removed.
+ */
+auto trim_left_view(
+    std::string_view data,
+    const std::vector<std::string_view>& to_remove) -> std::string_view;
 
 /**
  * @param data Trims the right side with std::isspace().
@@ -335,7 +366,7 @@ auto trim_right(
 
 /**
  * @param data Trims the right side of this data with `to_remove`.
- * @param to_remove The values on the right side to remove from `data`.
+ * @param to_remove The value on the right side to remove from `data`.
  */
 auto trim_right(
     std::string& data,
@@ -344,10 +375,26 @@ auto trim_right(
 /**
  * @param data Trims the right side of this data with `to_remove`.
  * @param to_remove The values on the right side to remove from `data`.
+ */
+auto trim_right(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void;
+
+/**
+ * @param data Trims the right side of this data with `to_remove`.
  * @return A string view of `data` with the right side of `to_remove` removed.
  */
 auto trim_right_view(
     std::string_view data) -> std::string_view;
+
+/**
+ * @param data Trims the right side of this data with `to_remove`.
+ * @param to_remove The value on the right side to remove from `data`.
+ * @return A string view of `data` with the right side of `to_remove` removed.
+ */
+auto trim_right_view(
+    std::string_view data,
+    std::string_view to_remove) -> std::string_view;
 
 /**
  * @param data Trims the right side of this data with `to_remove`.
@@ -356,7 +403,7 @@ auto trim_right_view(
  */
 auto trim_right_view(
     std::string_view data,
-    std::string_view to_remove) -> std::string_view;
+    const std::vector<std::string_view>& to_remove) -> std::string_view;
 
 /**
  * @return Trims the left and right sides of `data` with std::isspace().
@@ -366,11 +413,19 @@ auto trim(
 
 /**
  * @param data Trims the left and right sides of this data with `to_remove`.
- * @param to_remove The values on the left and right side to remove from `data`.
+ * @param to_remove The value on the left and right side to remove from `data`.
  */
 auto trim(
     std::string& data,
     std::string_view to_remove) -> void;
+
+/**
+ * @param data Trims the left and right sides of this data with `to_remove`.
+ * @param to_remove The values on the left and right side to remove from `data`.
+ */
+auto trim(
+    std::string& data,
+    const std::vector<std::string_view>& to_remove) -> void;
 
 /**
  * @param data Trims the left and right sides of `data` with std::isspace().
@@ -381,7 +436,7 @@ auto trim_view(
 
 /**
  * @param data Trims the left and right side of this data with `to_remove`.
- * @param to_remove The values on the left and right side to remove from `data`.
+ * @param to_remove The value on the left and right side to remove from `data`.
  * @return A string view of `data` with the left and right side of `to_remove` removed.
  */
 auto trim_view(
@@ -389,10 +444,20 @@ auto trim_view(
     std::string_view to_remove) -> std::string_view;
 
 /**
+ * @param data Trims the left and right side of this data with `to_remove`.
+ * @param to_remove The values on the left and right side to remove from `data`.
+ * @return A string view of `data` with the left and right side of `to_remove` values removed.
+ */
+auto trim_view(
+    std::string_view data,
+    const std::vector<std::string_view>& to_remove) -> std::string_view;
+
+/**
  * Replaces up to `count` instances of `from` to `to` within `data`.
  * @param data The data to replace instances of `from` with `to`.
  * @param from The value to replace.
  * @param to The value to replace with.
+ * @param case_type Which case to do the replace in, sensitive or insensitive.
  * @param count The maximum number of occurrences to replace, if std::nullopt all occurences are replaced.
  * @return The number of `from` occurrences replaced with `to`.
  */
@@ -400,13 +465,50 @@ auto replace(
     std::string& data,
     std::string_view from,
     std::string_view to,
+    Case case_type = Case::SENSITIVE,
     std::optional<std::size_t> count = std::nullopt) -> std::size_t;
 
 /**
- * @param data Determines if `data` starts with an integer value.  Might have trailing non-integer characters.
+ * Replaces up to `count` instances of `from` to `to` within `data`.
+ * @param data The data to replace instances of `from` with `to`.
+ * @param from The value to replace.
+ * @param to The value to replace with.
+ * @param case_type Which case to do the replace in, sensitive or insensitive.
+ * @param count The maximum number of occurrences to replace, if std::nullopt all occurences are replaced.
+ * @return `data` with replacements copy and the number of `from` occurrences replaced with `to`.
+ */
+auto replace_copy(
+    std::string_view data,
+    std::string_view from,
+    std::string_view to,
+    Case case_type = Case::SENSITIVE,
+    std::optional<std::size_t> count = std::nullopt) -> std::pair<std::string, std::size_t>;
+
+/**
+ * @param data Determines if `data` is an integer.
  * @return True if `data` starts with an integer value.
  */
 auto is_int(
+    std::string_view data) -> bool;
+
+/**
+ * @note This currently requires taking a copy of `data` to meet the floating point
+ *       to_number limitations.
+ *
+ * @param data Determines if `data` is floating point.
+ * @return True if `data` starts with an integer value.
+ */
+auto is_float(
+    std::string_view data) -> bool;
+
+/**
+ * @note This currently requires taking a copy of `data` if the integer check fails
+ *       to meet the floating point to_number limitations.
+ *
+ * @param data Determines if `data` is an number.
+ * @return True if `data` starts with an integer value.
+ */
+auto is_number(
     std::string_view data) -> bool;
 
 /**
@@ -418,8 +520,7 @@ auto is_int(
  */
 template <
     typename Integer,
-    std::enable_if_t<std::is_integral_v<Integer>, int> = 0
->
+    std::enable_if_t<std::is_integral_v<Integer>, int> = 0>
 auto to_number(
     std::string_view data,
     uint64_t base = 10) -> std::optional<Integer>
@@ -433,7 +534,7 @@ auto to_number(
     }
 
     // only the minus sign is recognized (not the plus sign), and only for signed integer types of value.
-    if(data.size() > 0 && data.front() == '+') {
+    if (data.size() > 0 && data.front() == '+') {
         data.remove_prefix(1);
     }
 
@@ -446,32 +547,27 @@ auto to_number(
     return output;
 }
 
-template<
+template <
     typename FloatingPoint,
-    std::enable_if_t<std::is_floating_point_v<FloatingPoint>, int> = 0
->
+    std::enable_if_t<std::is_floating_point_v<FloatingPoint>, int> = 0>
 auto to_number(
     const std::string& data) -> std::optional<FloatingPoint>
 {
     FloatingPoint output {};
 
-    std::size_t pos{0};
+    std::size_t pos { 0 };
 
-    try
-    {
+    try {
         if constexpr (sizeof(FloatingPoint) == sizeof(float)) {
             output = std::stof(data, &pos);
-        }
-        else if constexpr (sizeof(FloatingPoint) == sizeof(double)) {
+        } else if constexpr (sizeof(FloatingPoint) == sizeof(double)) {
             output = std::stod(data, &pos);
-        }
-        else if constexpr (sizeof(FloatingPoint) == sizeof(long double)) {
+        } else if constexpr (sizeof(FloatingPoint) == sizeof(long double)) {
             output = std::stold(data, &pos);
-        }
-        else {
+        } else {
             return std::nullopt;
         }
-    } catch(...) {
+    } catch (...) {
         return std::nullopt;
     }
 
@@ -479,16 +575,10 @@ auto to_number(
 }
 
 /**
- * @param buffer Places the current errno value into `buffer`.
- *               Will resize the buffer if the errno message is
- *               < buffer.length().  Does not allocate more space.
+ * @param errsv The errno value to get its string representation.
+ * @return Human readable representation of `errsv`.
  */
 auto strerror(
-    std::string& buffer) -> void;
-
-/**
- * @return String of the current errno value, maximum length is 1024 characters.
- */
-auto strerror() -> std::string;
+    int errsv) -> std::string;
 
 } // namespace chain::str
