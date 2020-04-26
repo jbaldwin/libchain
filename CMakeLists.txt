@@ -3,6 +3,7 @@ project(chain CXX)
 
 option(CHAIN_BUILD_TESTS    "Build the tests. Default=ON" ON)
 option(CHAIN_CODE_COVERAGE  "Enable code coverage, tests must also be enabled. Default=OFF" OFF)
+option(CHAIN_BUILD_EXAMPLES "Build the examples. Default=ON" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -40,4 +41,8 @@ endif()
 if(CHAIN_BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
+endif()
+
+if(CHAIN_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
