@@ -437,28 +437,57 @@ auto replace(
     Case case_type,
     std::optional<std::size_t> count) -> std::size_t
 {
-    (void)case_type; // TODO not supported yet
-
-    auto max = std::numeric_limits<std::size_t>::max();
-
-    if (count.has_value()) {
-        if (count.value() == 0) {
-            return 0;
-        } else {
-            max = count.value();
-        }
-    }
-
     std::size_t replaced { 0 };
 
-    std::size_t start_pos { 0 };
-    while ((start_pos = data.find(from.data(), start_pos, from.length())) != std::string::npos) {
-        data.replace(start_pos, from.length(), to.data(), to.length());
-        start_pos += to.length();
-        ++replaced;
+    if (!data.empty()) {
+        auto max = std::numeric_limits<std::size_t>::max();
+        if (count.has_value()) {
+            if (count.value() > 0) {
+                max = count.value();
+            } else {
+                return replaced; // 0 replacements asked for...!
+            }
+        }
 
-        if (replaced >= max) {
-            return replaced;
+        if (case_type == Case::SENSITIVE) {
+            std::size_t start_pos { 0 };
+            while ((start_pos = data.find(from.data(), start_pos, from.length())) != std::string::npos) {
+                data.replace(start_pos, from.length(), to.data(), to.length());
+                start_pos += to.length();
+                ++replaced;
+
+                if (replaced >= max) {
+                    return replaced;
+                }
+            }
+        } else {
+            // Due to count being a parameter, store each position and then replay count replacements
+            // from left to right in reverse.
+            std::vector<std::size_t> positions {};
+            // Data needs to be to_lowered for comparisons.
+            std::string data_lower = to_lower_copy(data);
+            // From needs to be to_lowered for comparisons.
+            std::string from_lower = to_lower_copy(from);
+            from = from_lower;
+
+            auto& d = data_lower;
+
+            std::size_t start_pos { 0 };
+            while ((start_pos = d.find(from.data(), start_pos, from.length())) != std::string::npos) {
+                positions.push_back(start_pos);
+                start_pos += from.length();
+                ++replaced;
+
+                if (replaced >= max) {
+                    break;
+                }
+            }
+
+            // replace backwards on the string so indexes don't have to be adjusted.
+            for (ssize_t i = positions.size() - 1; i >= 0; --i) {
+                auto pos = positions[i];
+                data.replace(pos, from.length(), to.data(), to.length());
+            }
         }
     }
 
