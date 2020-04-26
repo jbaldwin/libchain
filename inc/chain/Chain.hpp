@@ -533,7 +533,7 @@ auto to_number(
         }
     }
 
-    // only the minus sign is recognized (not the plus sign), and only for signed integer types of value.
+    // remove "+" for signed and unsigned types, it isn't recognized by `std::from_chars()`
     if (data.size() > 0 && data.front() == '+') {
         data.remove_prefix(1);
     }
