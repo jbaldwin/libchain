@@ -1,7 +1,7 @@
 libchain - C++17 std::string utility chain belt.
 ================================================
 
-[![CI](https://github.com/jbaldwin/libchain/workflows/build-release-test/badge.svg)](https://github.com/jbaldwin/libchain/workflows/build-release-test/badge.svg)
+[![CI](https://github.com/jbaldwin/libchain/workflows/build/badge.svg)](https://github.com/jbaldwin/libchain/workflows/build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/jbaldwin/libchain/badge.svg?branch=master)](https://coveralls.io/github/jbaldwin/libchain?branch=master)
 [![language][badge.language]][language]
 [![license][badge.license]][license]
