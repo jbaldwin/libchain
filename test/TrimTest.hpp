@@ -294,7 +294,7 @@ TEST_CASE("trim_right_view with to remove multiple")
 {
     REQUIRE(chain::str::trim_right_view("", { "abc", "def" }).empty());
     REQUIRE(chain::str::trim_right_view("abc", std::vector<std::string_view> {}) == "abc");
-    REQUIRE(chain::str::trim_right_view("abcdef", { "abc", "def" }).empty());
+    REQUIRE(chain::str::trim_right_view("abcdef", { "abc", "def" }) == "");
     REQUIRE(chain::str::trim_right_view("efgabcabcdefabcdef", { "abc", "def" }) == "efg");
     REQUIRE(chain::str::trim_right_view("efgabcdef", { "abc", "def" }) == "efg");
     REQUIRE(chain::str::trim_right_view("efgdefabc", { "abc", "efg" }) == "efgdef");

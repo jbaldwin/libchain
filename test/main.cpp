@@ -3,7 +3,8 @@
 
 #include <chain/Chain.hpp>
 
-#include "CompareTest.hpp"
+#include "EqualityTest.hpp"
+#include "FindTest.hpp"
 #include "JoinTest.hpp"
 #include "ReplaceTest.hpp"
 #include "SplitTest.hpp"
