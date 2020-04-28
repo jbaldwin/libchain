@@ -4,7 +4,8 @@ project(libchain_test CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_FILES_LIB_CHAIN_TEST
-    CompareTest.hpp
+    EqualityTest.hpp
+    FindTest.hpp
     JoinTest.hpp
     ReplaceTest.hpp
     SplitTest.hpp

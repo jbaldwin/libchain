@@ -1,122 +1,10 @@
 #include "chain/Chain.hpp"
 
-#include <algorithm>
 #include <cstring>
 
 namespace chain::str {
 
 const std::stringstream g_unused_stringstream {};
-
-auto split(
-    std::string_view data,
-    char delim) -> std::vector<std::string_view>
-{
-    return split(data, std::string_view { &delim, 1 });
-}
-
-auto split(
-    std::string_view data,
-    std::string_view delim) -> std::vector<std::string_view>
-{
-    std::vector<std::string_view> out {};
-    split(data, delim, out);
-    return out;
-}
-
-auto split(
-    std::string_view data,
-    char delim,
-    std::vector<std::string_view>& out) -> void
-{
-    return split(data, std::string_view { &delim, 1 }, out);
-}
-
-auto split(
-    std::string_view data,
-    std::string_view delim,
-    std::vector<std::string_view>& out) -> void
-{
-    std::size_t length;
-    std::size_t start = 0;
-
-    while (true) {
-        std::size_t next = data.find(delim, start);
-        if (next == std::string_view::npos) {
-            // The length of this split is the full string length - start.
-            // This is also true if there were no delimiters found at all.
-            length = data.length() - start;
-            out.emplace_back(data.data() + start, length);
-            break;
-        }
-
-        // The length of this split is from start to next.
-        length = next - start;
-        out.emplace_back(data.data() + start, length);
-
-        // Update our iteration to skip the 'next' delimiter found.
-        start = next + delim.length();
-    }
-}
-
-auto cmp(
-    std::string_view left,
-    std::string_view right,
-    Case case_type) -> bool
-{
-    if (left.length() == right.length()) {
-        if (case_type == Case::SENSITIVE) {
-            return left == right;
-        } else {
-            return std::equal(
-                left.begin(), left.end(),
-                right.begin(), right.end(),
-                icmp_uchar);
-        }
-    }
-
-    return false;
-}
-
-auto starts_with(
-    std::string_view data,
-    std::string_view start,
-    Case case_type) -> bool
-{
-    if (data.length() >= start.length()) {
-        if (case_type == Case::SENSITIVE) {
-            return std::equal(start.begin(), start.end(), data.begin(), [](auto& lhs, auto& rhs) {
-                return lhs == rhs;
-            });
-        } else {
-            return std::equal(start.begin(), start.end(), data.begin(), [](auto& lhs, auto& rhs) {
-                return icmp_uchar(static_cast<unsigned char>(lhs), static_cast<unsigned char>(rhs));
-            });
-        }
-    }
-
-    return false;
-}
-
-auto ends_with(
-    std::string_view data,
-    std::string_view end,
-    Case case_type) -> bool
-{
-
-    if (data.length() >= end.length()) {
-        if (case_type == Case::SENSITIVE) {
-            return std::equal(end.rbegin(), end.rend(), data.rbegin(), [](auto& lhs, auto& rhs) {
-                return lhs == rhs;
-            });
-        } else {
-            return std::equal(end.rbegin(), end.rend(), data.rbegin(), [](auto& lhs, auto& rhs) {
-                return icmp_uchar(static_cast<unsigned char>(lhs), static_cast<unsigned char>(rhs));
-            });
-        }
-    }
-
-    return false;
-}
 
 auto to_lower(
     std::string& data) -> void
@@ -153,61 +41,13 @@ auto trim_left(
         auto found = std::find_if_not(
             data.begin(),
             data.end(),
-            [](unsigned char ch) -> bool { return std::isspace(ch); });
+            ::isspace);
 
         // If the entire string is std::isspace just clear it.
         if (found == data.end()) {
             data.clear();
         } else {
             data.erase(data.begin(), found);
-        }
-    }
-}
-
-auto trim_left(
-    std::string& data,
-    std::string_view to_remove) -> void
-{
-    if (!data.empty() && !to_remove.empty()) {
-        std::size_t total_remove_size = 0;
-        std::string_view sv { data.data(), data.length() };
-        while (starts_with(sv, to_remove)) {
-            sv.remove_prefix(to_remove.size());
-            total_remove_size += to_remove.size();
-        }
-
-        if (total_remove_size > 0) {
-            data.erase(0, total_remove_size);
-        }
-    }
-}
-
-auto trim_left(
-    std::string& data,
-    const std::vector<std::string_view>& to_remove) -> void
-{
-    if (!data.empty() && !to_remove.empty()) {
-        std::size_t total_remove_size = 0;
-        std::string_view sv { data.data(), data.length() };
-
-        while (true) {
-            bool had_removal { false };
-
-            for (const auto& remove : to_remove) {
-                while (starts_with(sv, remove)) {
-                    sv.remove_prefix(remove.size());
-                    total_remove_size += remove.size();
-                    had_removal = true;
-                }
-            }
-
-            if (!had_removal) {
-                break;
-            }
-        }
-
-        if (total_remove_size > 0) {
-            data.erase(0, total_remove_size);
         }
     }
 }
@@ -230,43 +70,6 @@ auto trim_left_view(
     return data;
 }
 
-auto trim_left_view(
-    std::string_view data,
-    std::string_view to_remove) -> std::string_view
-{
-    if (!data.empty() && !to_remove.empty()) {
-        while (starts_with(data, to_remove)) {
-            data.remove_prefix(to_remove.size());
-        }
-    }
-
-    return data;
-}
-
-auto trim_left_view(
-    std::string_view data,
-    const std::vector<std::string_view>& to_remove) -> std::string_view
-{
-    if (!data.empty() && !to_remove.empty()) {
-        while (true) {
-            bool had_removal { false };
-
-            for (const auto& remove : to_remove) {
-                while (starts_with(data, remove)) {
-                    data.remove_prefix(remove.size());
-                    had_removal = true;
-                }
-            }
-
-            if (!had_removal) {
-                break;
-            }
-        }
-    }
-
-    return data;
-}
-
 auto trim_right(
     std::string& data) -> void
 {
@@ -280,53 +83,6 @@ auto trim_right(
             data.clear();
         } else {
             data.erase(found.base(), data.end());
-        }
-    }
-}
-
-auto trim_right(
-    std::string& data,
-    std::string_view to_remove) -> void
-{
-    if (!to_remove.empty()) {
-        std::size_t total_remove_size = 0;
-        std::string_view sv { data.data(), data.length() };
-        while (ends_with(sv, to_remove)) {
-            sv.remove_suffix(to_remove.size());
-            total_remove_size += to_remove.size();
-        }
-        if (total_remove_size > 0) {
-            data.erase(data.size() - total_remove_size);
-        }
-    }
-}
-
-auto trim_right(
-    std::string& data,
-    const std::vector<std::string_view>& to_remove) -> void
-{
-    if (!data.empty() && !to_remove.empty()) {
-        std::size_t total_remove_size = 0;
-        std::string_view sv { data.data(), data.length() };
-
-        while (true) {
-            bool had_removal { false };
-
-            for (const auto& remove : to_remove) {
-                while (ends_with(sv, remove)) {
-                    sv.remove_suffix(remove.size());
-                    total_remove_size += remove.size();
-                    had_removal = true;
-                }
-            }
-
-            if (!had_removal) {
-                break;
-            }
-        }
-
-        if (total_remove_size > 0) {
-            data.erase(data.size() - total_remove_size);
         }
     }
 }
@@ -350,43 +106,6 @@ auto trim_right_view(
     return data;
 }
 
-auto trim_right_view(
-    std::string_view data,
-    std::string_view to_remove) -> std::string_view
-{
-    if (!data.empty() && !to_remove.empty()) {
-        while (ends_with(data, to_remove)) {
-            data.remove_suffix(to_remove.size());
-        }
-    }
-
-    return data;
-}
-
-auto trim_right_view(
-    std::string_view data,
-    const std::vector<std::string_view>& to_remove) -> std::string_view
-{
-    if (!data.empty() && !to_remove.empty()) {
-        while (true) {
-            bool had_removal { false };
-
-            for (const auto& remove : to_remove) {
-                while (ends_with(data, remove)) {
-                    data.remove_suffix(remove.size());
-                    had_removal = true;
-                }
-            }
-
-            if (!had_removal) {
-                break;
-            }
-        }
-    }
-
-    return data;
-}
-
 auto trim(
     std::string& data) -> void
 {
@@ -394,116 +113,10 @@ auto trim(
     trim_right(data);
 }
 
-auto trim(
-    std::string& data,
-    std::string_view to_remove) -> void
-{
-    trim_left(data, to_remove);
-    trim_right(data, to_remove);
-}
-
-auto trim(
-    std::string& data,
-    const std::vector<std::string_view>& to_remove) -> void
-{
-    trim_left(data, to_remove);
-    trim_right(data, to_remove);
-}
-
 auto trim_view(
-    std::string_view s) -> std::string_view
+    std::string_view data) -> std::string_view
 {
-    return trim_left_view(trim_right_view(s));
-}
-
-auto trim_view(
-    std::string_view data,
-    std::string_view to_remove) -> std::string_view
-{
-    return trim_right_view(trim_left_view(data, to_remove), to_remove);
-}
-
-auto trim_view(
-    std::string_view data,
-    const std::vector<std::string_view>& to_remove) -> std::string_view
-{
-    return trim_right_view(trim_left_view(data, to_remove), to_remove);
-}
-
-auto replace(
-    std::string& data,
-    std::string_view from,
-    std::string_view to,
-    Case case_type,
-    std::optional<std::size_t> count) -> std::size_t
-{
-    std::size_t replaced { 0 };
-
-    if (!data.empty()) {
-        auto max = std::numeric_limits<std::size_t>::max();
-        if (count.has_value()) {
-            if (count.value() > 0) {
-                max = count.value();
-            } else {
-                return replaced; // 0 replacements asked for...!
-            }
-        }
-
-        if (case_type == Case::SENSITIVE) {
-            std::size_t start_pos { 0 };
-            while ((start_pos = data.find(from.data(), start_pos, from.length())) != std::string::npos) {
-                data.replace(start_pos, from.length(), to.data(), to.length());
-                start_pos += to.length();
-                ++replaced;
-
-                if (replaced >= max) {
-                    return replaced;
-                }
-            }
-        } else {
-            // Due to count being a parameter, store each position and then replay count replacements
-            // from left to right in reverse.
-            std::vector<std::size_t> positions {};
-            // Data needs to be to_lowered for comparisons.
-            std::string data_lower = to_lower_copy(data);
-            // From needs to be to_lowered for comparisons.
-            std::string from_lower = to_lower_copy(from);
-            from = from_lower;
-
-            auto& d = data_lower;
-
-            std::size_t start_pos { 0 };
-            while ((start_pos = d.find(from.data(), start_pos, from.length())) != std::string::npos) {
-                positions.push_back(start_pos);
-                start_pos += from.length();
-                ++replaced;
-
-                if (replaced >= max) {
-                    break;
-                }
-            }
-
-            // replace backwards on the string so indexes don't have to be adjusted.
-            for (ssize_t i = positions.size() - 1; i >= 0; --i) {
-                auto pos = positions[i];
-                data.replace(pos, from.length(), to.data(), to.length());
-            }
-        }
-    }
-
-    return replaced;
-}
-
-auto replace_copy(
-    std::string_view data,
-    std::string_view from,
-    std::string_view to,
-    Case case_type,
-    std::optional<std::size_t> count) -> std::pair<std::string, std::size_t>
-{
-    std::string copy { data };
-    std::size_t num = replace(copy, from, to, case_type, count);
-    return { std::move(copy), num };
+    return trim_left_view(trim_right_view(data));
 }
 
 auto is_int(
