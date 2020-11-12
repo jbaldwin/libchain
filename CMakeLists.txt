@@ -8,7 +8,7 @@ option(CHAIN_BUILD_EXAMPLES "Build the examples. Default=ON" ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_FILES_LIB_CHAIN
-    inc/chain/Chain.hpp src/Chain.cpp
+    inc/chain/chain.hpp src/chain.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES_LIB_CHAIN})

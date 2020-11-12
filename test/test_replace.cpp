@@ -1,13 +1,11 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("replace")
 {
     std::string haystack = "derp";
-    auto count = chain::str::replace(haystack, "d", "h");
+    auto        count    = chain::str::replace(haystack, "d", "h");
     REQUIRE(haystack == "herp");
     REQUIRE(count == 1);
 }
@@ -15,7 +13,7 @@ TEST_CASE("replace")
 TEST_CASE("replace_copy simple")
 {
     std::string original = "derp";
-    auto [data, count] = chain::str::replace_copy(original, "d", "h");
+    auto [data, count]   = chain::str::replace_copy(original, "d", "h");
     REQUIRE(data == "herp");
     REQUIRE(count == 1);
     REQUIRE(original == "derp");
@@ -23,7 +21,7 @@ TEST_CASE("replace_copy simple")
 
 TEST_CASE("replace with count")
 {
-    using Case = chain::str::Case;
+    using case_t = chain::str::case_t;
     {
         auto [data, count] = chain::str::replace_copy("abc abc abc", "abc", "cba", 2);
         REQUIRE(count == 2);
@@ -46,45 +44,45 @@ TEST_CASE("replace with count")
 
 TEST_CASE("replace insensitive")
 {
-    using Case = chain::str::Case;
+    using case_t         = chain::str::case_t;
     std::string haystack = "derp";
-    auto count = chain::str::replace<Case::INSENSITIVE>(haystack, "D", "H");
+    auto        count    = chain::str::replace<case_t::insensitive>(haystack, "D", "H");
     REQUIRE(haystack == "Herp");
     REQUIRE(count == 1);
 }
 
 TEST_CASE("replace insensitive lots")
 {
-    using Case = chain::str::Case;
+    using case_t         = chain::str::case_t;
     std::string haystack = "ddddddddddddddddddddddddddddddddddddddddddd";
-    auto count = chain::str::replace<Case::INSENSITIVE>(haystack, "D", "H");
+    auto        count    = chain::str::replace<case_t::insensitive>(haystack, "D", "H");
     REQUIRE(haystack == "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
     REQUIRE(count == 43);
 }
 
 TEST_CASE("replace insensitive lots max count")
 {
-    using Case = chain::str::Case;
+    using case_t         = chain::str::case_t;
     std::string haystack = "ddddddddddddddddddddddddddddddddddddddddddd";
-    auto count = chain::str::replace<Case::INSENSITIVE>(haystack, "D", "H", 25);
+    auto        count    = chain::str::replace<case_t::insensitive>(haystack, "D", "H", 25);
     REQUIRE(haystack == "HHHHHHHHHHHHHHHHHHHHHHHHHdddddddddddddddddd");
     REQUIRE(count == 25);
 }
 
 TEST_CASE("replace insenstive with bigger words")
 {
-    using Case = chain::str::Case;
+    using case_t         = chain::str::case_t;
     std::string haystack = "abc|ABC|Abc|aBc|abC|AbC|aBc";
-    auto count = chain::str::replace<Case::INSENSITIVE>(haystack, "AbC", "xYz");
+    auto        count    = chain::str::replace<case_t::insensitive>(haystack, "AbC", "xYz");
     REQUIRE(haystack == "xYz|xYz|xYz|xYz|xYz|xYz|xYz");
     REQUIRE(count == 7);
 }
 
 TEST_CASE("replace insenstive with bigger words max coun")
 {
-    using Case = chain::str::Case;
+    using case_t         = chain::str::case_t;
     std::string haystack = "abc|ABC|Abc|aBc|abC|AbC|aBc";
-    auto count = chain::str::replace<Case::INSENSITIVE>(haystack, "AbC", "xYz", 3);
+    auto        count    = chain::str::replace<case_t::insensitive>(haystack, "AbC", "xYz", 3);
     REQUIRE(haystack == "xYz|xYz|xYz|aBc|abC|AbC|aBc");
     REQUIRE(count == 3);
 }

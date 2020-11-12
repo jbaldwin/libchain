@@ -1,13 +1,14 @@
 #include <iostream>
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 int main()
 {
     using namespace chain;
 
     auto print_parts = [](auto& parts) {
-        for(const auto& part : parts) {
+        for (const auto& part : parts)
+        {
             std::cout << part << " ";
         }
         std::cout << "\n";
@@ -20,9 +21,8 @@ int main()
     print_parts(parts1);
 
     // A split mapped into integers.
-    auto parts2 = str::split_map<int64_t>("1,2,3", ',', [](std::string_view part) {
-        return str::to_number<int64_t>(part).value_or(0);
-    });
+    auto parts2 = str::split_map<int64_t>(
+        "1,2,3", ',', [](std::string_view part) { return str::to_number<int64_t>(part).value_or(0); });
     /// parts2 = { 1, 2, 3 }
     print_parts(parts2);
 
@@ -34,14 +34,14 @@ int main()
     print_parts(parts3);
 
     // A simple csv join.
-    std::vector<int64_t> parts4{1,2,3};
-    auto joined1 = str::join(parts4, ',');
+    std::vector<int64_t> parts4{1, 2, 3};
+    auto                 joined1 = str::join(parts4, ',');
     // joined1 == "1,2,3"
     std::cout << joined1 << "\n";
 
     // A map join which squares its parts first.
-    std::vector<int64_t> parts5{1,2,3};
-    auto joined2 = str::map_join(parts5, ',', [](int64_t x) { return x * x; });
+    std::vector<int64_t> parts5{1, 2, 3};
+    auto                 joined2 = str::map_join(parts5, ',', [](int64_t x) { return x * x; });
     // joined2 == "1,4,9"
     std::cout << joined2 << "\n";
 

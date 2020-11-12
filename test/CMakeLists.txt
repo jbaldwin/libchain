@@ -4,15 +4,15 @@ project(libchain_test CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_FILES_LIB_CHAIN_TEST
-    EqualityTest.hpp
-    FindTest.hpp
-    JoinTest.hpp
-    ReplaceTest.hpp
-    SplitTest.hpp
-    StrerrorTest.hpp
-    ToNumberTest.hpp
-    TransformTest.hpp
-    TrimTest.hpp
+    test_equality.cpp
+    test_find.cpp
+    test_join.cpp
+    test_replace.cpp
+    test_split.cpp
+    test_strerror.cpp
+    test_to_number.cpp
+    test_transform.cpp
+    test_trim.cpp
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES_LIB_CHAIN_TEST})

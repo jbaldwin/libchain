@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("split csv")
 {
@@ -102,9 +100,8 @@ TEST_CASE("split leading and trailing string view delim")
 
 TEST_CASE("split_map csv to int")
 {
-    auto parts = chain::str::split_map<int64_t>("1,2,3", ',', [](auto part) {
-        return chain::str::to_number<int64_t>(part).value_or(0);
-    });
+    auto parts = chain::str::split_map<int64_t>(
+        "1,2,3", ',', [](auto part) { return chain::str::to_number<int64_t>(part).value_or(0); });
 
     REQUIRE(parts.size() == 3);
     REQUIRE(parts[0] == 1);

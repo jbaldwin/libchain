@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("trim_left")
 {
@@ -92,31 +90,31 @@ TEST_CASE("trim_left with to remove multiple")
 {
     {
         std::string data = "";
-        chain::str::trim_left(data, { "abc", "def" });
+        chain::str::trim_left(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "abcdef";
-        chain::str::trim_left(data, { "abc", "def" });
+        chain::str::trim_left(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "abcabcdefefg";
-        chain::str::trim_left(data, { "abc", "def" });
+        chain::str::trim_left(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "abcdefefg";
-        chain::str::trim_left(data, { "abc", "def" });
+        chain::str::trim_left(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "abcdefefg";
-        chain::str::trim_left(data, { "abc", "efg" });
+        chain::str::trim_left(data, {"abc", "efg"});
         REQUIRE(data == "defefg");
     }
 }
@@ -144,12 +142,12 @@ TEST_CASE("trim_left_view with to remove")
 
 TEST_CASE("trim_left_view with to remove multiple")
 {
-    REQUIRE(chain::str::trim_left_view("", { "abc", "def" }).empty());
-    REQUIRE(chain::str::trim_left_view("abc", std::vector<std::string_view> {}) == "abc");
-    REQUIRE(chain::str::trim_left_view("abcdef", { "abc", "def" }).empty());
-    REQUIRE(chain::str::trim_left_view("abcabcdefabcdefefg", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_left_view("abcdefefg", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_left_view("abcdefefg", { "abc", "efg" }) == "defefg");
+    REQUIRE(chain::str::trim_left_view("", {"abc", "def"}).empty());
+    REQUIRE(chain::str::trim_left_view("abc", std::vector<std::string_view>{}) == "abc");
+    REQUIRE(chain::str::trim_left_view("abcdef", {"abc", "def"}).empty());
+    REQUIRE(chain::str::trim_left_view("abcabcdefabcdefefg", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_left_view("abcdefefg", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_left_view("abcdefefg", {"abc", "efg"}) == "defefg");
 }
 
 TEST_CASE("trim_right")
@@ -240,31 +238,31 @@ TEST_CASE("trim_right with to remove multiple")
 {
     {
         std::string data = "";
-        chain::str::trim_right(data, { "abc", "def" });
+        chain::str::trim_right(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "abcdef";
-        chain::str::trim_right(data, { "abc", "def" });
+        chain::str::trim_right(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "efgabcabcdef";
-        chain::str::trim_right(data, { "abc", "def" });
+        chain::str::trim_right(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "efgabcdef";
-        chain::str::trim_right(data, { "abc", "def" });
+        chain::str::trim_right(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "efgdefabc";
-        chain::str::trim_right(data, { "abc", "efg" });
+        chain::str::trim_right(data, {"abc", "efg"});
         REQUIRE(data == "efgdef");
     }
 }
@@ -292,12 +290,12 @@ TEST_CASE("trim_right_view with to remove")
 
 TEST_CASE("trim_right_view with to remove multiple")
 {
-    REQUIRE(chain::str::trim_right_view("", { "abc", "def" }).empty());
-    REQUIRE(chain::str::trim_right_view("abc", std::vector<std::string_view> {}) == "abc");
-    REQUIRE(chain::str::trim_right_view("abcdef", { "abc", "def" }) == "");
-    REQUIRE(chain::str::trim_right_view("efgabcabcdefabcdef", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_right_view("efgabcdef", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_right_view("efgdefabc", { "abc", "efg" }) == "efgdef");
+    REQUIRE(chain::str::trim_right_view("", {"abc", "def"}).empty());
+    REQUIRE(chain::str::trim_right_view("abc", std::vector<std::string_view>{}) == "abc");
+    REQUIRE(chain::str::trim_right_view("abcdef", {"abc", "def"}) == "");
+    REQUIRE(chain::str::trim_right_view("efgabcabcdefabcdef", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_right_view("efgabcdef", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_right_view("efgdefabc", {"abc", "efg"}) == "efgdef");
 }
 
 TEST_CASE("trim")
@@ -394,37 +392,37 @@ TEST_CASE("trim with to remove multiple")
 {
     {
         std::string data = "";
-        chain::str::trim(data, { "abc", "def" });
+        chain::str::trim(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "abcdef";
-        chain::str::trim(data, { "abc", "def" });
+        chain::str::trim(data, {"abc", "def"});
         REQUIRE(data.empty());
     }
 
     {
         std::string data = "abcabcdefefgabcabcdef";
-        chain::str::trim(data, { "abc", "def" });
+        chain::str::trim(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "abcdefefgabcdef";
-        chain::str::trim(data, { "abc", "def" });
+        chain::str::trim(data, {"abc", "def"});
         REQUIRE(data == "efg");
     }
 
     {
         std::string data = "efgdefabc";
-        chain::str::trim(data, { "abc", "efg" });
+        chain::str::trim(data, {"abc", "efg"});
         REQUIRE(data == "def");
     }
 
     {
         std::string data = "abcdefefg";
-        chain::str::trim(data, { "abc", "efg" });
+        chain::str::trim(data, {"abc", "efg"});
         REQUIRE(data == "def");
     }
 }
@@ -453,10 +451,10 @@ TEST_CASE("trim_view with to remove")
 
 TEST_CASE("trim_view with to remove multiple")
 {
-    REQUIRE(chain::str::trim_view("", { "abc", "def" }).empty());
-    REQUIRE(chain::str::trim_view("abc", std::vector<std::string_view> {}) == "abc");
-    REQUIRE(chain::str::trim_view("abcdef", { "abc", "def" }).empty());
-    REQUIRE(chain::str::trim_view("abcabcdefabcdefefgabcabcdefabcdef", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_view("abcdefefgabcdef", { "abc", "def" }) == "efg");
-    REQUIRE(chain::str::trim_view("efgdefabc", { "abc", "efg" }) == "def");
+    REQUIRE(chain::str::trim_view("", {"abc", "def"}).empty());
+    REQUIRE(chain::str::trim_view("abc", std::vector<std::string_view>{}) == "abc");
+    REQUIRE(chain::str::trim_view("abcdef", {"abc", "def"}).empty());
+    REQUIRE(chain::str::trim_view("abcabcdefabcdefefgabcabcdefabcdef", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_view("abcdefefgabcdef", {"abc", "def"}) == "efg");
+    REQUIRE(chain::str::trim_view("efgdefabc", {"abc", "efg"}) == "def");
 }
