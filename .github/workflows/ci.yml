@@ -1,6 +1,6 @@
 name: build
 
-on: [push]
+on: [pull_request]
 
 jobs:
     build-ubuntu:
@@ -52,11 +52,11 @@ jobs:
             -   name: test-release-g++
                 run: |
                     cd build-release-g++
-                    ctest -v
+                    ctest -VV
             -   name: test-release-clang
                 run: |
                     cd build-release-clang
-                    ctest -v
+                    ctest -VV
     build-fedora:
         name: Build Fedora and Test
         runs-on: ubuntu-latest
@@ -111,15 +111,15 @@ jobs:
             -   name: test-release-g++
                 run: |
                     cd build-release-g++
-                    ctest -v
+                    ctest -VV
             -   name: test-release-clang
                 run: |
                     cd build-release-clang
-                    ctest -v
+                    ctest -VV
             -   name: Build coverage info
                 run: |
                     cd build-debug-g++
-                    ctest -v
+                    ctest -VV
                     gcov -o ./test/CMakeFiles/libchain_test.dir/main.cpp.o ./test/libchain_test
                     lcov --include "*/inc/chain/*" --include "*/src/*" --exclude "test/*" -o libchain_tests.info -c -d .
             -   name: Coveralls GitHub Action

@@ -13,9 +13,6 @@ set(SOURCE_FILES_LIB_CHAIN_TEST
     ToNumberTest.hpp
     TransformTest.hpp
     TrimTest.hpp
-
-    # Included for full coverage, can't seem to get gvoc to pickup src/Chain.cpp yet
-    ../inc/chain/Chain.hpp ../src/Chain.cpp
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES_LIB_CHAIN_TEST})

@@ -39,6 +39,11 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 endif()
 
 if(CHAIN_BUILD_TESTS)
+    if(CHAIN_CODE_COVERAGE)
+        target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
+        target_link_libraries(${PROJECT_NAME} PRIVATE gcov)
+    endif()
+
     enable_testing()
     add_subdirectory(test)
 endif()
