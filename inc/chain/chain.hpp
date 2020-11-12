@@ -209,16 +209,16 @@ auto split(std::string_view data, char delim) -> std::vector<std::string_view>
 
 /**
  * @tparam case_type Is the comparison case sensitive or insensitive?
- * @tparam T The output type that the `MapFunctor` maps into.
- * @tparam MapFunctor The function type to apply against each split item.
+ * @tparam T The output type that the `map_functor_type` maps into.
+ * @tparam map_functor_type The function type to apply against each split item.
  * @param data The data to split by `delim`.
  * @param delim The delimeter to split `data` by.
  * @param map The map functor too apply to each split item.
  * @param out The string parts from the split.  This can be pre-allocated
  *            for the expected number of items to split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename MapFunctor = std::function<T(std::string_view)>>
-auto split_map(std::string_view data, std::string_view delim, const MapFunctor& map, std::vector<T>& out) -> void
+template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+auto split_map(std::string_view data, std::string_view delim, const map_functor_type& map, std::vector<T>& out) -> void
 {
     std::size_t length;
     std::size_t start = 0;
@@ -246,41 +246,41 @@ auto split_map(std::string_view data, std::string_view delim, const MapFunctor& 
 
 /**
  * @tparam case_type Is the comparison case sensitive or insensitive?
- * @tparam T The output type that the `MapFunctor` maps into.
- * @tparam MapFunctor The function type to apply against each split item.
+ * @tparam T The output type that the `map_functor_type` maps into.
+ * @tparam map_functor_type The function type to apply against each split item.
  * @param data The data to split by `delim`.
  * @param delim The delimeter to split `data` by.
  * @param map The map functor too apply to each split item.
  * @param out The string parts from the split.  This can be pre-allocated
  *            for the expected number of items to split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename MapFunctor = std::function<T(std::string_view)>>
-auto split_map(std::string_view data, char delim, const MapFunctor& map, std::vector<T>& out) -> void
+template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+auto split_map(std::string_view data, char delim, const map_functor_type& map, std::vector<T>& out) -> void
 {
-    split_map<T, case_type, MapFunctor>(data, std::string_view{&delim, 1}, map, out);
+    split_map<T, case_type, map_functor_type>(data, std::string_view{&delim, 1}, map, out);
 }
 
 /**
  * @tparam case_type Is the comparison case sensitive or insensitive?
- * @tparam T The output type that the `MapFunctor` maps into.
- * @tparam MapFunctor The function type to apply against each split item.
+ * @tparam T The output type that the `map_functor_type` maps into.
+ * @tparam map_functor_type The function type to apply against each split item.
  * @param data The data to split by `delim`.
  * @param delim The delimeter to split `data` by.
  * @param map The map functor too apply to each split item.
  * @return The string parts from the split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename MapFunctor = std::function<T(std::string_view)>>
-auto split_map(std::string_view data, std::string_view delim, const MapFunctor& map) -> std::vector<T>
+template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+auto split_map(std::string_view data, std::string_view delim, const map_functor_type& map) -> std::vector<T>
 {
     std::vector<T> out{};
-    split_map<T, case_type, MapFunctor>(data, delim, map, out);
+    split_map<T, case_type, map_functor_type>(data, delim, map, out);
     return out;
 }
 
 /**
  * @tparam case_type Is the comparison case sensitive or insensitive?
- * @tparam T The output type that the `MapFunctor` maps into.
- * @tparam MapFunctor The function type to apply against each split item.
+ * @tparam T The output type that the `map_functor_type` maps into.
+ * @tparam map_functor_type The function type to apply against each split item.
  * @param data The data to split by `delim`.
  * @param delim The delimeter to split `data` by.
  * @param map The map functor too apply to each split item.
@@ -289,12 +289,52 @@ auto split_map(std::string_view data, std::string_view delim, const MapFunctor& 
 template<
     typename T          = std::string_view,
     case_t case_type    = case_t::sensitive,
-    typename MapFunctor = std::function<T(std::string_view)>>
-auto split_map(std::string_view data, char delim, const MapFunctor& map) -> std::vector<T>
+    typename map_functor_type = std::function<T(std::string_view)>>
+auto split_map(std::string_view data, char delim, const map_functor_type& map) -> std::vector<T>
 {
     std::vector<T> out{};
-    split_map<T, case_type, MapFunctor>(data, std::string_view{&delim, 1}, map, out);
+    split_map<T, case_type, map_functor_type>(data, std::string_view{&delim, 1}, map, out);
     return out;
+}
+
+/**
+ * Splits the given data string by the given delimeter and calls a functor for each token.
+ * @tparam functor_type std::invocable<void(std::string_view)>
+ * @param data The string data to split by the given delimeter.
+ * @param delim The delimeter to split the data by.
+ * @param functor The functor to call for each tokenized part of the data.
+ */
+template<case_t case_type = case_t::sensitive, typename functor_type = std::function<void(std::string_view)>>
+auto split_for_each(std::string_view data, std::string_view delim, functor_type&& functor) -> void
+{
+    std::size_t length;
+    std::size_t start = 0;
+
+    while (true)
+    {
+        std::size_t next = find<case_type>(data, delim, start);
+        if (next == std::string_view::npos)
+        {
+            // The length of this split is the full string length - start.
+            // This is also true if there were no delimiters found at all.
+            length = data.length() - start;
+            functor(std::string_view{data.data() + start, length});
+            break;
+        }
+
+        // The length of this split is from start to next.
+        length = next - start;
+        functor(std::string_view{data.data() + start, length});
+
+        // Update our iteration to skip the 'next' delimiter found.
+        start = next + delim.length();
+    }
+}
+
+template<case_t case_type = case_t::sensitive, typename functor_type = std::function<void(std::string_view)>>
+auto split_for_each(std::string_view data, char delim, functor_type&& functor) -> void
+{
+    split_for_each<case_type, functor_type>(data, std::string_view{&delim, 1}, std::forward<functor_type>(functor));
 }
 
 /**
@@ -350,13 +390,13 @@ auto join(const RangeType& parts, char delim) -> std::string
  * Maps and joins a set of values together into a single string.  The values being joined
  * together must have an ostream operator<< function declared to convert to strings.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
- * @tparam MapFunctor A function to map each individual `parts` part before joining.
+ * @tparam map_functor_type A function to map each individual `parts` part before joining.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
  * @return Mapped `parts` joined by `delim`.
  */
-template<typename RangeType, typename MapFunctor>
-auto map_join(const RangeType& parts, std::string_view delim, const MapFunctor& map) -> std::string
+template<typename RangeType, typename map_functor_type>
+auto map_join(const RangeType& parts, std::string_view delim, const map_functor_type& map) -> std::string
 {
     thread_local std::stringstream ss{};
 
@@ -385,13 +425,13 @@ auto map_join(const RangeType& parts, std::string_view delim, const MapFunctor& 
 /**
  * Maps and joins a set of values together into a string.
  * @tparam RangeType A container of values that can be converted into strings via operator<<.
- * @tparam MapFunctor A function to map each individual `parts` part before joining.
+ * @tparam map_functor_type A function to map each individual `parts` part before joining.
  * @param parts The set of values to join together with `delim`.
  * @param delim The delimter to place between each joined part.
  * @return Mapped `parts` joined by `delim`.
  */
-template<typename RangeType, typename MapFunctor>
-auto map_join(const RangeType& parts, char delim, const MapFunctor& map) -> std::string
+template<typename RangeType, typename map_functor_type>
+auto map_join(const RangeType& parts, char delim, const map_functor_type& map) -> std::string
 {
     return map_join(parts, std::string_view{&delim, 1}, map);
 }
