@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("integer")
 {
@@ -68,8 +66,18 @@ TEST_CASE("integer invalid")
 
 TEST_CASE("float")
 {
-    std::string data { "1.234" };
-    auto value = chain::str::to_number<float>(data);
+    std::string data{"1.234"};
+    auto        value = chain::str::to_number<float>(data);
+
+    REQUIRE(value.has_value());
+    REQUIRE(std::to_string(value.value()) == "1.234000");
+}
+
+TEST_CASE("float string_view")
+{
+    std::string      data{"1.234"};
+    std::string_view data_view{data.data(), data.length()};
+    auto             value = chain::str::to_number<float>(data_view);
 
     REQUIRE(value.has_value());
     REQUIRE(std::to_string(value.value()) == "1.234000");
@@ -77,8 +85,8 @@ TEST_CASE("float")
 
 TEST_CASE("double")
 {
-    std::string data { "1.23456789" };
-    auto value = chain::str::to_number<double>(data);
+    std::string data{"1.23456789"};
+    auto        value = chain::str::to_number<double>(data);
 
     REQUIRE(value.has_value());
     REQUIRE(std::to_string(value.value()) == "1.234568");
@@ -86,8 +94,8 @@ TEST_CASE("double")
 
 TEST_CASE("long double")
 {
-    std::string data { "1.234567890123456789" };
-    auto value = chain::str::to_number<long double>(data);
+    std::string data{"1.234567890123456789"};
+    auto        value = chain::str::to_number<long double>(data);
 
     REQUIRE(value.has_value());
     REQUIRE(std::to_string(value.value()) == "1.234568");
@@ -95,8 +103,8 @@ TEST_CASE("long double")
 
 TEST_CASE("float invalid")
 {
-    std::string data { "a1.234" };
-    auto value = chain::str::to_number<float>(data);
+    std::string data{"a1.234"};
+    auto        value = chain::str::to_number<float>(data);
 
     REQUIRE_FALSE(value.has_value());
 }

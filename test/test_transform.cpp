@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("to_lower")
 {

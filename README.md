@@ -29,7 +29,7 @@ https://github.com/jbaldwin/libchain
 ```C++
     #include <iostream>
 
-    #include <chain/Chain.hpp>
+    #include <chain/chain.hpp>
 
     int main()
     {

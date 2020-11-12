@@ -1,11 +1,11 @@
-#include <iostream>
 #include <chrono>
-#include <string>
+#include <iostream>
 #include <mutex>
-#include <vector>
+#include <string>
 #include <thread>
+#include <vector>
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 int main()
 {
@@ -22,14 +22,14 @@ int main()
         {
             auto start1 = std::chrono::steady_clock::now();
 
-            for(size_t i = 0; i < ITERATIONS; ++i)
+            for (size_t i = 0; i < ITERATIONS; ++i)
             {
                 std::string data = input;
-                str::replace<str::Case::SENSITIVE>(data, "derp", "ferp", 2);
+                str::replace<str::case_t::sensitive>(data, "derp", "ferp", 2);
             }
 
-            auto end1 = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1);
+            auto                        end1    = std::chrono::steady_clock::now();
+            auto                        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1);
             std::lock_guard<std::mutex> g{cout_guard};
             std::cout << "replace(sensitive): " << elapsed.count() << "ms\n";
         }
@@ -37,25 +37,27 @@ int main()
         {
             auto start1 = std::chrono::steady_clock::now();
 
-            for(size_t i = 0; i < ITERATIONS; ++i)
+            for (size_t i = 0; i < ITERATIONS; ++i)
             {
                 std::string data = input;
-                str::replace<str::Case::INSENSITIVE>(data, "DERP", "ferp", 2);
+                str::replace<str::case_t::insensitive>(data, "DERP", "ferp", 2);
             }
 
-            auto end1 = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1);
+            auto                        end1    = std::chrono::steady_clock::now();
+            auto                        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - start1);
             std::lock_guard<std::mutex> g{cout_guard};
             std::cout << "replace(insensitive): " << elapsed.count() << "ms\n";
         }
     });
 
     std::vector<std::thread> workers;
-    for(size_t i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i)
+    {
         workers.emplace_back(std::thread{executor_func});
     }
 
-    for(auto& worker : workers) {
+    for (auto& worker : workers)
+    {
         worker.join();
     }
 

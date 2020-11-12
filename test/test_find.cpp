@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("find sensitive")
 {
@@ -24,13 +22,13 @@ TEST_CASE("find sensitive")
 TEST_CASE("find insensitive")
 {
     using namespace chain::str;
-    REQUIRE(find<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
-    REQUIRE(find<Case::INSENSITIVE>("asdfjsldkfjslkdjfpDeRldkjfl", "derp") == std::string_view::npos);
-    REQUIRE(find<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
-    REQUIRE(find<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "DERP", 4) == 17);
-    REQUIRE(find<Case::INSENSITIVE>("aaaaaaaaaaaaaaaaaaaaaDERp", "derp") == 21);
-    REQUIRE(find<Case::INSENSITIVE>("dERPaaaaaaaaaaaaaaaaaaaaa", "derp") == 0);
-    REQUIRE(find<Case::INSENSITIVE>("derpaaaaaaaaaaaaaaaaaderp", "DERP") == 0);
+    REQUIRE(find<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
+    REQUIRE(find<case_t::insensitive>("asdfjsldkfjslkdjfpDeRldkjfl", "derp") == std::string_view::npos);
+    REQUIRE(find<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
+    REQUIRE(find<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "DERP", 4) == 17);
+    REQUIRE(find<case_t::insensitive>("aaaaaaaaaaaaaaaaaaaaaDERp", "derp") == 21);
+    REQUIRE(find<case_t::insensitive>("dERPaaaaaaaaaaaaaaaaaaaaa", "derp") == 0);
+    REQUIRE(find<case_t::insensitive>("derpaaaaaaaaaaaaaaaaaderp", "DERP") == 0);
 }
 
 TEST_CASE("rfind sensitive")
@@ -54,13 +52,13 @@ TEST_CASE("rfind sensitive")
 TEST_CASE("rfind insensitive")
 {
     using namespace chain::str;
-    REQUIRE(rfind<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
-    REQUIRE(rfind<Case::INSENSITIVE>("asdfjsldkfjslkdjfpDeRldkjfl", "derp") == std::string_view::npos);
-    REQUIRE(rfind<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
-    REQUIRE(rfind<Case::INSENSITIVE>("asdfjsldkfjslkdjfDERPldkjfl", "DERP") == 17);
-    REQUIRE(rfind<Case::INSENSITIVE>("aaaaaaaaaaaaaaaaaaaaaDERp", "derp") == 21);
-    REQUIRE(rfind<Case::INSENSITIVE>("dERPaaaaaaaaaaaaaaaaaaaaa", "derp") == 0);
-    REQUIRE(rfind<Case::INSENSITIVE>("derpaaaaaaaaaaaaaaaaaderp", "DERP") == 21);
-    REQUIRE(rfind<Case::INSENSITIVE>("derpaaaaaaaaaaaaaaaaaderp", "DERP", 22) == 0);
-    REQUIRE(rfind<Case::INSENSITIVE>("derpaaaaaaaaaaaaaaaaaderp", "DERP", 20) == 0);
+    REQUIRE(rfind<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
+    REQUIRE(rfind<case_t::insensitive>("asdfjsldkfjslkdjfpDeRldkjfl", "derp") == std::string_view::npos);
+    REQUIRE(rfind<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "derp") == 17);
+    REQUIRE(rfind<case_t::insensitive>("asdfjsldkfjslkdjfDERPldkjfl", "DERP") == 17);
+    REQUIRE(rfind<case_t::insensitive>("aaaaaaaaaaaaaaaaaaaaaDERp", "derp") == 21);
+    REQUIRE(rfind<case_t::insensitive>("dERPaaaaaaaaaaaaaaaaaaaaa", "derp") == 0);
+    REQUIRE(rfind<case_t::insensitive>("derpaaaaaaaaaaaaaaaaaderp", "DERP") == 21);
+    REQUIRE(rfind<case_t::insensitive>("derpaaaaaaaaaaaaaaaaaderp", "DERP", 22) == 0);
+    REQUIRE(rfind<case_t::insensitive>("derpaaaaaaaaaaaaaaaaaderp", "DERP", 20) == 0);
 }

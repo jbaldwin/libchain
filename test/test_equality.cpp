@@ -1,8 +1,6 @@
-#pragma once
-
 #include "catch.hpp"
 
-#include <chain/Chain.hpp>
+#include <chain/chain.hpp>
 
 TEST_CASE("equal case sensitive")
 {
@@ -12,10 +10,10 @@ TEST_CASE("equal case sensitive")
 
 TEST_CASE("equal case insensitive")
 {
-    using Case = chain::str::Case;
-    REQUIRE(chain::str::equal<Case::INSENSITIVE>("dErP", "dErP"));
-    REQUIRE(chain::str::equal<Case::INSENSITIVE>("dErP", "DeRp"));
-    REQUIRE(chain::str::equal<Case::INSENSITIVE>("herp", "HERP"));
+    using case_t = chain::str::case_t;
+    REQUIRE(chain::str::equal<case_t::insensitive>("dErP", "dErP"));
+    REQUIRE(chain::str::equal<case_t::insensitive>("dErP", "DeRp"));
+    REQUIRE(chain::str::equal<case_t::insensitive>("herp", "HERP"));
 }
 
 TEST_CASE("equal different lengths")
@@ -37,14 +35,14 @@ TEST_CASE("starts_with sensitive")
 
 TEST_CASE("starts_with insensitive")
 {
-    using Case = chain::str::Case;
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("abcdefg", "A"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("abcdefg", "AB"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("abcdefg", "ABC"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("ABCDEFG", "abcd"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("ABCDEFG", "abcde"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("aBcDeFg", "AbCdEfG"));
-    REQUIRE(chain::str::starts_with<Case::INSENSITIVE>("abcdefg", "ABCDEFG"));
+    using case_t = chain::str::case_t;
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("abcdefg", "A"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("abcdefg", "AB"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("abcdefg", "ABC"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("ABCDEFG", "abcd"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("ABCDEFG", "abcde"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("aBcDeFg", "AbCdEfG"));
+    REQUIRE(chain::str::starts_with<case_t::insensitive>("abcdefg", "ABCDEFG"));
 }
 
 TEST_CASE("starts_with longer start")
@@ -66,14 +64,14 @@ TEST_CASE("ends_with sensitive")
 
 TEST_CASE("ends_with insensitive")
 {
-    using Case = chain::str::Case;
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("abcdefg", "G"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("abcdefg", "FG"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("abcdefg", "EFG"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("ABCDEFG", "defg"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("ABCDEFG", "cdefg"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("aBcDeFg", "BcDeFg"));
-    REQUIRE(chain::str::ends_with<Case::INSENSITIVE>("abcdefg", "ABCDEFG"));
+    using case_t = chain::str::case_t;
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("abcdefg", "G"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("abcdefg", "FG"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("abcdefg", "EFG"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("ABCDEFG", "defg"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("ABCDEFG", "cdefg"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("aBcDeFg", "BcDeFg"));
+    REQUIRE(chain::str::ends_with<case_t::insensitive>("abcdefg", "ABCDEFG"));
 }
 
 TEST_CASE("ends_with longer end")
