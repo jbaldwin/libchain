@@ -154,11 +154,11 @@ auto strerror(
     // the data from the returned error_ptr.  The XSI complain version of this
     // function would probably just work...
     // TODO: might need some #defines to make this more portable for non-GNU.
-    constexpr std::size_t LEN = 1024;
+    constexpr std::size_t LEN = 256;
     char buffer[LEN];
     char* error_ptr = strerror_r(errsv, buffer, LEN);
 
-    return std::string { error_ptr, std::strlen(error_ptr) };
+    return std::string { error_ptr, strnlen(error_ptr, LEN) };
 }
 
 } // namespace chain::str
