@@ -302,9 +302,10 @@ auto split_map(std::string_view data, char delim, const map_functor_type& map) -
  * @tparam functor_type std::invocable<void(std::string_view)>
  * @param data The string data to split by the given delimeter.
  * @param delim The delimeter to split the data by.
- * @param functor The functor to call for each tokenized part of the data.
+ * @param functor The functor to call for each tokenized part of the data.  Return true to continue
+ *                parsing more token parts, return false to stop parsing.
  */
-template<case_t case_type = case_t::sensitive, typename functor_type = std::function<void(std::string_view)>>
+template<case_t case_type = case_t::sensitive, typename functor_type = std::function<bool(std::string_view)>>
 auto split_for_each(std::string_view data, std::string_view delim, functor_type&& functor) -> void
 {
     std::size_t length;
@@ -324,14 +325,19 @@ auto split_for_each(std::string_view data, std::string_view delim, functor_type&
 
         // The length of this split is from start to next.
         length = next - start;
-        functor(std::string_view{data.data() + start, length});
+
+        // Call the users functor for this token part, if they return false stop parsing.
+        if(!functor(std::string_view{data.data() + start, length}))
+        {
+            break;
+        }
 
         // Update our iteration to skip the 'next' delimiter found.
         start = next + delim.length();
     }
 }
 
-template<case_t case_type = case_t::sensitive, typename functor_type = std::function<void(std::string_view)>>
+template<case_t case_type = case_t::sensitive, typename functor_type = std::function<bool(std::string_view)>>
 auto split_for_each(std::string_view data, char delim, functor_type&& functor) -> void
 {
     split_for_each<case_type, functor_type>(data, std::string_view{&delim, 1}, std::forward<functor_type>(functor));

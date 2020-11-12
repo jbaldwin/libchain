@@ -114,6 +114,7 @@ TEST_CASE("split_for_each char empty string")
     uint64_t called{0};
     chain::str::split_for_each("", '\n', [&](std::string_view) {
         ++called;
+        return true;
     });
 
     REQUIRE(called == 1);
@@ -124,6 +125,7 @@ TEST_CASE("split_for_each string_view empty string")
     uint64_t called{0};
     chain::str::split_for_each("", "\n", [&](std::string_view) {
         ++called;
+        return true;
     });
 
     REQUIRE(called == 1);
@@ -132,7 +134,7 @@ TEST_CASE("split_for_each string_view empty string")
 TEST_CASE("split_for_each csv")
 {
     uint64_t called{0};
-    chain::str::split_for_each("1,2,3333,4", ",", [&](std::string_view s) {
+    chain::str::split_for_each("1,2,3333,4", ",", [&](std::string_view s) -> bool {
         ++called;
 
         switch(called)
@@ -150,7 +152,26 @@ TEST_CASE("split_for_each csv")
                 REQUIRE(s == "4");
                 break;
         }
+
+        return true;
     });
 
     REQUIRE(called == 4);
+}
+
+TEST_CASE("split_for_each stop early")
+{
+    uint64_t called{0};
+    chain::str::split_for_each("1,2,3,4,5,6,7,8,9,10", ",", [&](std::string_view s) -> bool {
+        ++called;
+
+        if(called >= 3)
+        {
+            return false;
+        }
+
+        return true;
+    });
+
+    REQUIRE(called == 3);
 }
