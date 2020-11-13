@@ -31,8 +31,9 @@ for file in $(git diff-index --cached --name-only HEAD); do
 done
 
 # Update the README.md example code with the given macros.
-template_contents=$(cat '.githooks/readme_template.md')
-readme_contents=$(cat 'examples/readme.cpp')
+template_contents=$(cat '.githooks/readme-template.md')
+# All code examples in markdown should be indeded '    '
+readme_contents=$(cat 'examples/readme.cpp' | sed -e 's/^/    /')
 
 echo "${template_contents/\$\{EXAMPLE_README_CPP\}/$readme_contents}" > README.md
 git add README.md
