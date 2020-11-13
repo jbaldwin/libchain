@@ -34,6 +34,12 @@ ${EXAMPLE_README_CPP}
 
 File bug reports, feature requests and questions using [GitHub Issues](https://github.com/jbaldwin/libchain/issues)
 
+## Readme updates
+To edit this file the template is located at `.githooks/readme-template.md`, editing it directly in the root README.md will be overwritten by the `git pre-commit` hook which automatically replaces the code portions of this file with the appropriate examples.
+
+## Code formatting
+This library has a `git pre-commit` hook which is installed when `cmake` is invoked.  Any files that are commited will automatically have `clang-format` run on them before.
+
 Copyright © 2020, Josh Baldwin
 
 [badge.language]: https://img.shields.io/badge/language-C%2B%2B17-yellow.svg
