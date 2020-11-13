@@ -217,7 +217,10 @@ auto split(std::string_view data, char delim) -> std::vector<std::string_view>
  * @param out The string parts from the split.  This can be pre-allocated
  *            for the expected number of items to split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+template<
+    typename T,
+    case_t case_type          = case_t::sensitive,
+    typename map_functor_type = std::function<T(std::string_view)>>
 auto split_map(std::string_view data, std::string_view delim, const map_functor_type& map, std::vector<T>& out) -> void
 {
     std::size_t length;
@@ -254,7 +257,10 @@ auto split_map(std::string_view data, std::string_view delim, const map_functor_
  * @param out The string parts from the split.  This can be pre-allocated
  *            for the expected number of items to split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+template<
+    typename T,
+    case_t case_type          = case_t::sensitive,
+    typename map_functor_type = std::function<T(std::string_view)>>
 auto split_map(std::string_view data, char delim, const map_functor_type& map, std::vector<T>& out) -> void
 {
     split_map<T, case_type, map_functor_type>(data, std::string_view{&delim, 1}, map, out);
@@ -269,7 +275,10 @@ auto split_map(std::string_view data, char delim, const map_functor_type& map, s
  * @param map The map functor too apply to each split item.
  * @return The string parts from the split.
  */
-template<typename T, case_t case_type = case_t::sensitive, typename map_functor_type = std::function<T(std::string_view)>>
+template<
+    typename T,
+    case_t case_type          = case_t::sensitive,
+    typename map_functor_type = std::function<T(std::string_view)>>
 auto split_map(std::string_view data, std::string_view delim, const map_functor_type& map) -> std::vector<T>
 {
     std::vector<T> out{};
@@ -287,8 +296,8 @@ auto split_map(std::string_view data, std::string_view delim, const map_functor_
  * @return The string parts from the split.
  */
 template<
-    typename T          = std::string_view,
-    case_t case_type    = case_t::sensitive,
+    typename T                = std::string_view,
+    case_t case_type          = case_t::sensitive,
     typename map_functor_type = std::function<T(std::string_view)>>
 auto split_map(std::string_view data, char delim, const map_functor_type& map) -> std::vector<T>
 {
@@ -327,7 +336,7 @@ auto split_for_each(std::string_view data, std::string_view delim, functor_type&
         length = next - start;
 
         // Call the users functor for this token part, if they return false stop parsing.
-        if(!functor(std::string_view{data.data() + start, length}))
+        if (!functor(std::string_view{data.data() + start, length}))
         {
             break;
         }
