@@ -137,7 +137,7 @@ TEST_CASE("split_for_each csv")
     chain::str::split_for_each("1,2,3333,4", ",", [&](std::string_view s) -> bool {
         ++called;
 
-        switch(called)
+        switch (called)
         {
             case 1:
                 REQUIRE(s == "1");
@@ -165,7 +165,7 @@ TEST_CASE("split_for_each stop early")
     chain::str::split_for_each("1,2,3,4,5,6,7,8,9,10", ",", [&](std::string_view s) -> bool {
         ++called;
 
-        if(called >= 3)
+        if (called >= 3)
         {
             return false;
         }
