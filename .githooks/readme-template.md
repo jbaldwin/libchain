@@ -27,7 +27,7 @@ https://github.com/jbaldwin/libchain
 ## Examples
 
 ```C++
-${EXAMPLE_README_CPP}
+    ${EXAMPLE_README_CPP}
 ````
 
 ## Support
