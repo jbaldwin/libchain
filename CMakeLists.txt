@@ -2,15 +2,19 @@ cmake_minimum_required(VERSION 3.0.2)
 project(chain CXX)
 
 # Set the githooks directory to auto format and update the readme.
-message("git config core.hooksPath .githooks")
+message("${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR} -> git config --local core.hooksPath .githooks")
 execute_process(
-    COMMAND git config core.hooksPath .githooks
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND git config --local core.hooksPath .githooks
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 option(CHAIN_BUILD_TESTS    "Build the tests. Default=ON" ON)
 option(CHAIN_CODE_COVERAGE  "Enable code coverage, tests must also be enabled. Default=OFF" OFF)
 option(CHAIN_BUILD_EXAMPLES "Build the examples. Default=ON" ON)
+
+message("${PROJECT_NAME} CHAIN_BUILD_EXAMPLES = ${CHAIN_BUILD_EXAMPLES}")
+message("${PROJECT_NAME} CHAIN_BUILD_TESTS    = ${CHAIN_BUILD_TESTS}")
+message("${PROJECT_NAME} CHAIN_CODE_COVERAGE  = ${CHAIN_CODE_COVERAGE}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
