@@ -311,10 +311,12 @@ auto split_map(std::string_view data, char delim, const map_functor_type& map) -
  * @tparam functor_type std::invocable<void(std::string_view)>
  * @param data The string data to split by the given delimeter.
  * @param delim The delimeter to split the data by.
- * @param functor The functor to call for each tokenized part of the data.  Return true to continue
- *                parsing more token parts, return false to stop parsing.
+ * @param functor The functor to call for each tokenized part of the data.  By default this will
+ *                be called for every tokenized part of the data, if at some point stopping is
+ *                required then use a lambda or functor that returns a boolean.  After each token
+ *                part return true to continue parsing or false to break out of parsing.
  */
-template<case_t case_type = case_t::sensitive, typename functor_type = std::function<bool(std::string_view)>>
+template<case_t case_type = case_t::sensitive, typename functor_type = std::function<void(std::string_view)>>
 auto split_for_each(std::string_view data, std::string_view delim, functor_type&& functor) -> void
 {
     std::size_t length;
@@ -335,10 +337,17 @@ auto split_for_each(std::string_view data, std::string_view delim, functor_type&
         // The length of this split is from start to next.
         length = next - start;
 
-        // Call the users functor for this token part, if they return false stop parsing.
-        if (!functor(std::string_view{data.data() + start, length}))
+        if constexpr (std::is_same_v<std::invoke_result_t<functor_type, std::string_view>, bool>)
         {
-            break;
+            // Call the users functor for this token part, if they return false stop parsing.
+            if (!functor(std::string_view{data.data() + start, length}))
+            {
+                break;
+            }
+        }
+        else
+        {
+            functor(std::string_view{data.data() + start, length});
         }
 
         // Update our iteration to skip the 'next' delimiter found.

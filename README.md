@@ -63,10 +63,11 @@ https://github.com/jbaldwin/libchain
         print_parts(parts3);
     
         // A split with zero allocations.
-        str::split_for_each("1,2,3,4,5", ',', [](std::string_view part) -> bool {
+        str::split_for_each("1,2,3,4,5", ',', [](std::string_view part) {
             // 1, 2, 3, 4, 5
             std::cout << part << ", ";
-            return true; // Continue parsing, return false to stop at any time.
+            // Can optionally provide a lambda that returns -> bool type,
+            // returning true continues splitting, returning false stops splitting.
         });
         std::cout << "\n";
     
@@ -78,9 +79,8 @@ https://github.com/jbaldwin/libchain
     
         // A map join which squares its parts first.
         std::vector<int64_t> parts5{1, 2, 3};
-        auto                 joined2 = str::map_join(parts5, ',', [](int64_t x) { return x * x; });
-        // joined2 == "1,4,9"
-        std::cout << joined2 << "\n";
+        // "1,4,9"
+        std::cout << str::map_join(parts5, ',', [](int64_t x) { return x * x; }) << "\n";
     
         // Simple consistent to number api, leverages std::optional instead of exceptions.
         auto value = str::to_number<uint64_t>("420").value_or(0);
