@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <charconv>
+#include <limits>
 #include <numeric>
 #include <optional>
 #include <sstream>
